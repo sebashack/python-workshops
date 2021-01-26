@@ -11,6 +11,15 @@ set-py-venv:
 set-py-venv-with-deps: set-py-venv
 	${VENV_DIR}/bin/pip install -r requirements.txt
 
+
+.PHONY: check-style
+check-style:
+	python3 -m black --check ${CURDIR}/src
+
+.PHONY: style
+style:
+	python3 -m black ${CURDIR}/src
+
 .PHONY: clean
 clean:
 	rm -rf ${VENV_DIR}

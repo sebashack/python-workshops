@@ -10,7 +10,10 @@ class Driver:
         self.name = name
 
     def __str__(self):
-        return f'Driver(idx="self.idx", name="{self.name}")'
+        return f'Driver(idx="{self.idx}", name="{self.name}")'
+
+    def __repr__(self):
+        return f'Driver(idx="{self.idx}", name="{self.name}")'
 
 
 def gen_random_drivers(n, names, surnames):

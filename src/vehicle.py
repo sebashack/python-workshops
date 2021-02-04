@@ -14,10 +14,10 @@ class Vehicle:
         self.plate = plate
 
     def __str__(self):
-        return f'Vehicle(plate="{self.plate}", category="{self.category}")'
+        return f'Vehicle(plate="{self.plate}", category={self.category})'
 
     def __repr__(self):
-        return f'Vehicle(plate="{self.plate}", category="{self.category}")'
+        return f'Vehicle(plate="{self.plate}", category={self.category})'
 
 
 def read_vehicles(csv_file_path):

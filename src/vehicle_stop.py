@@ -27,6 +27,20 @@ class VehicleStop:
         return s
 
 
+def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
+    stops = []
+
+    for i in range(num_stops - 1):
+        now = get_current_utc_time()
+        arrival_time = advance_utc(day_index, now, gen_random_sec_increment())
+        coord = rnd.choice(stop_coords)
+        stop = VehicleStop(coord.latitude, coord.longitude, arrival_time)
+        stops.append(stop)
+
+    return stops
+
+
+# Private Helpers
 def read_coordinates(csv_file_path):
     coordinates = []
 
@@ -37,7 +51,7 @@ def read_coordinates(csv_file_path):
             lat = float(row["latitude"])
             lon = float(row["longitude"])
 
-            Coord = namedtuple("Coord", "latitude, longitude")
+            Coord = namedtuple("Coord", ["latitude", "longitude"])
 
             coordinates.append(Coord(lat, lon))
 

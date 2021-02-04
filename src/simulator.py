@@ -24,11 +24,11 @@ def read_csv_data(vehicles_path, coords_path, names_path):
 # where the key is a 3-tuple related to a list of vehicle stops. Each
 # dictionary is meant to represent a simulated day indexed by the position
 # in the list. The `Coord` in the key is the vehicle's start coordinate.
-def gen_day_samples(num_days, vehicle_size, max_stops, csv_data):
+def gen_day_samples(num_days, max_vehicle_sz, max_stops, csv_data):
     day_stops = []
 
     for day_i in range(num_days):
-        day_sample = gen_day_sample(vehicle_size, max_stops, day_i, csv_data)
+        day_sample = gen_day_sample(max_vehicle_sz, max_stops, day_i, csv_data)
         day_stops.append(day_sample)
 
     return day_stops

@@ -29,13 +29,16 @@ class VehicleStop:
 
 def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
     stops = []
+    utc = get_current_utc_time()
+    utc = utc.replace(hour=0, minute=0, second=0, microsecond=0)
+    t = advance_utc(day_index, utc, 0)
 
     for i in range(num_stops):
-        now = get_current_utc_time()
-        arrival_time = advance_utc(day_index, now, gen_random_sec_increment())
+        arrival_time = advance_utc(0, t, gen_random_sec_increment())
         coord = rnd.choice(stop_coords)
         stop = VehicleStop(coord.latitude, coord.longitude, arrival_time)
         stops.append(stop)
+        t = arrival_time
 
     return stops
 
@@ -61,8 +64,8 @@ def read_coordinates(csv_file_path):
 def gen_random_sec_increment():
     inc_10_mins = 600
     # Pick out a random increment in a range
-    # [10mins, 20mins, 30mins, ..., 300mins], 300mins = 5hs
-    increment = rnd.choice(range(0, 31 * inc_10_mins, inc_10_mins))
+    # [10mins, 20mins, 30mins, ..., 120mins], 120mins = 2hs
+    increment = rnd.choice(range(inc_10_mins, 13 * inc_10_mins, inc_10_mins))
 
     return increment
 

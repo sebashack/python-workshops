@@ -22,6 +22,8 @@ def gen_random_drivers(n, names, surnames):
     for i in range(n - 1):
         drivers.append(gen_random_driver(names, surnames))
 
+    return drivers
+
 
 def read_driver_names(csv_file_path):
     male_names = []
@@ -43,7 +45,7 @@ def read_driver_names(csv_file_path):
             if row["type"] == "surname":
                 surnames.append(name)
 
-        Names = namedtuple("Names", "female_names, male_names, surnames")
+        Names = namedtuple("Names", ["female_names", "male_names", "surnames"])
 
     return Names(female_names, male_names, surnames)
 

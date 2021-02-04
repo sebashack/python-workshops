@@ -6,7 +6,7 @@ import csv
 
 class Driver:
     def __init__(self, idx, name):
-        self.idx = name
+        self.idx = idx
         self.name = name
 
     def __str__(self):
@@ -19,7 +19,7 @@ class Driver:
 def gen_random_drivers(n, names, surnames):
     drivers = []
 
-    for i in range(n - 1):
+    for i in range(n):
         drivers.append(gen_random_driver(names, surnames))
 
     return drivers

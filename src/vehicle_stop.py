@@ -30,7 +30,7 @@ class VehicleStop:
 def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
     stops = []
 
-    for i in range(num_stops - 1):
+    for i in range(num_stops):
         now = get_current_utc_time()
         arrival_time = advance_utc(day_index, now, gen_random_sec_increment())
         coord = rnd.choice(stop_coords)

@@ -22,7 +22,7 @@ def read_csv_data(vehicles_path, coords_path, names_path):
 def gen_day_samples(num_days, vehicle_size, max_stops, csv_data):
     day_stops = []
 
-    for day_i in range(num_days - 1):
+    for day_i in range(num_days):
         day_sample = gen_day_sample(vehicle_size, max_stops, day_i, csv_data)
         day_stops.append(day_sample)
 
@@ -30,6 +30,7 @@ def gen_day_samples(num_days, vehicle_size, max_stops, csv_data):
 
 
 # Private Helpers
+
 
 def gen_day_sample(max_vehicle_size, max_stops, day_index, csv_data):
     vehicles = csv_data.vehicles

@@ -1,7 +1,7 @@
 from collections import namedtuple
 import random as rnd
-import csv
 from datetime import datetime, timedelta
+from faker import Faker
 
 
 class VehicleStop:
@@ -42,24 +42,21 @@ def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
     return stops
 
 
+# Generate random coords from a center outwards.
+def gen_random_coords(size, center, rad):
+    fake = Faker()
+    coords = []
+    Coord = namedtuple("Coord", ["latitude", "longitude"])
+
+    for _ in range(size):
+        lat = fake.coordinate(center=center[0], radius=rad)
+        lon = fake.coordinate(center=center[1], radius=rad)
+        coords.append(Coord(float(lat), float(lon)))
+
+    return coords
+
+
 # Private Helpers
-def read_coordinates(csv_file_path):
-    coordinates = []
-
-    with open(csv_file_path, newline="\n") as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-
-        for row in csv_reader:
-            lat = float(row["latitude"])
-            lon = float(row["longitude"])
-
-            Coord = namedtuple("Coord", ["latitude", "longitude"])
-
-            coordinates.append(Coord(lat, lon))
-
-    return coordinates
-
-
 def gen_random_sec_increment():
     inc_10_mins = 600
     # Pick out a random increment in a range

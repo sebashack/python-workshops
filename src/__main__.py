@@ -10,8 +10,8 @@ def main(argv):
     names_csv_path = mk_csv_file_path("person_list.csv")
 
     csv_data = read_csv_data(vehicle_csv_path, coord_csv_path, names_csv_path)
-    # Run simulation for 30 days, a max number of 12 vehicles per day
-    # and a max number of 8 stops per vehicle per day
+    # Run simulation for 30 days, a max number of 11 vehicles per day
+    # and a max number of 11 stops per vehicle per day
     simulation_data = gen_day_samples(30, 11, 11, csv_data)
 
     for day in simulation_data:

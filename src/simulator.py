@@ -35,8 +35,6 @@ def gen_day_samples(num_days, max_vehicle_sz, max_stops, csv_data):
 
 
 # Private Helpers
-
-
 def gen_day_sample(max_vehicle_size, max_stops, day_index, csv_data):
     vehicles = csv_data.vehicles
 

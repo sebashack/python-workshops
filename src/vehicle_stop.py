@@ -29,12 +29,11 @@ class VehicleStop:
 
 def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
     stops = []
-    utc = get_current_utc_time()
-    utc = utc.replace(hour=0, minute=0, second=0, microsecond=0)
-    t = advance_utc(day_index, utc, 0)
+    utc = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
+    t = increment_utc_by_days(utc, day_index)
 
-    for i in range(num_stops):
-        arrival_time = advance_utc(0, t, gen_random_sec_increment())
+    for _ in range(num_stops):
+        arrival_time = increment_utc_by_secs(t, gen_random_sec_increment())
         coord = rnd.choice(stop_coords)
         stop = VehicleStop(coord.latitude, coord.longitude, arrival_time)
         stops.append(stop)
@@ -70,13 +69,14 @@ def gen_random_sec_increment():
     return increment
 
 
-def advance_utc(day_index, start_time, increment_secs):
+def increment_utc_by_days(utc, num_days):
     one_day = 86400
-    days = timedelta(seconds=one_day * day_index)
-    secs = timedelta(seconds=increment_secs)
+    days = timedelta(seconds=one_day * num_days)
 
-    return start_time + days + secs
+    return utc + days
 
 
-def get_current_utc_time():
-    return datetime.utcnow()
+def increment_utc_by_secs(utc, secs):
+    secs = timedelta(seconds=secs)
+
+    return utc + secs

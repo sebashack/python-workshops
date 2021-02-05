@@ -19,7 +19,7 @@ class Driver:
 def gen_random_drivers(n, names, surnames):
     drivers = []
 
-    for i in range(n):
+    for _ in range(n):
         drivers.append(gen_random_driver(names, surnames))
 
     return drivers
@@ -50,13 +50,13 @@ def read_driver_names(csv_file_path):
     return Names(female_names, male_names, surnames)
 
 
-# Private Helpers
 def gen_random_driver(names, surnames):
     name = rnd.choice(names)
     surname = rnd.choice(surnames)
     return Driver(gen_idx(), mk_full_name(name, surname))
 
 
+# Private Helpers
 def mk_full_name(name, surname):
     return name + " " + surname
 

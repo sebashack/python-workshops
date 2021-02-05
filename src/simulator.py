@@ -50,11 +50,6 @@ def gen_day_sample(max_vehicle_size, max_stops, day_idx, center, rad, data):
 
     drivers = gen_random_drivers(vehicle_size, names, data.names.surnames)
 
-    rnd.shuffle(start_coords)
-    rnd.shuffle(stop_coords)
-    rnd.shuffle(vehicles)
-    rnd.shuffle(drivers)
-
     keys = list(zip(vehicles, drivers, start_coords))
     vehicle_stops = {}
 

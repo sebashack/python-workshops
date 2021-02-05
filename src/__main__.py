@@ -16,7 +16,7 @@ def main(argv):
     # (lat = 6.251404, lon = -75.575261)
     medellin_center = (6.251404, -75.575261)
     rad = 0.055
-    sim_data = gen_day_samples(30, 100, 20, medellin_center, rad, csv_data)
+    sim_data = gen_day_samples(30, 120, 30, medellin_center, rad, csv_data)
 
     for day in sim_data:
         print(day)

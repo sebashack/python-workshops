@@ -21,21 +21,6 @@ make check-style
 make style
 ```
 
-## Sample coordinates' ranges
-
-```
-RGCS Random sampling results
-Thu Feb  4 17:30:42 2021
-
-Inputs
-"Sample size"   200
-"Minimum X"     -75.6264659486188
-"Maximum X"     -74.6426753856921
-"Minimum Y"     6.14599167006744
-"Maximum Y"     6.36753030341842
-"Precision"     4
-```
-
 ## Activate virtual environment
 
 ```

@@ -9,8 +9,8 @@ def main(argv):
     names_csv_path = mk_csv_file_path("person_list.csv")
     csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
 
-    # Run simulation for 30 days, a max number of 200 vehicles per day
-    # and a max number of 20 stops per vehicle per day.
+    # Run simulation for 30 days, a max number of 120 vehicles per day
+    # and a max number of 30 stops per vehicle per day.
     # This creates locations approximately in "El area Metropolitana".
     # Medellin's center is located approximately at
     # (lat = 6.251404, lon = -75.575261)

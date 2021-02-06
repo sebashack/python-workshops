@@ -1,5 +1,6 @@
 import sys
 import os
+import time
 
 from simulator import read_csv_data, gen_day_samples
 
@@ -9,18 +10,20 @@ def main(argv):
     names_csv_path = mk_csv_file_path("person_list.csv")
     csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
 
-    # Run simulation for 30 days, a max number of 120 vehicles per day
-    # and a max number of 30 stops per vehicle per day.
+    # Run simulation for 30 days, a max number of 1000 vehicles per day
+    # and a max number of 40 stops per vehicle per day.
     # This creates locations approximately in "El area Metropolitana".
     # Medellin's center is located approximately at
     # (lat = 6.251404, lon = -75.575261)
     medellin_center = (6.251404, -75.575261)
     rad = 0.055
-    sim_data = gen_day_samples(30, 120, 30, medellin_center, rad, csv_data)
+    start = time.time()
+    gen_day_samples(30, 1000, 40, medellin_center, rad, csv_data)
+    end = time.time()
 
-    for day in sim_data:
-        print(day)
-        print("\n")
+    diff = end - start
+
+    print(f"End of simulation. {diff} sec(s) elapsed ...")
 
 
 def mk_csv_file_path(path):

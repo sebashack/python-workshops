@@ -27,14 +27,14 @@ class VehicleStop:
         return s
 
 
-def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
+def gen_random_vehicle_stops(num_stops, day_index, coord_gen):
     stops = []
     utc = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
     t = increment_utc_by_days(utc, day_index)
 
     for _ in range(num_stops):
         arrival_time = increment_utc_by_secs(t, gen_random_sec_increment())
-        coord = rnd.choice(stop_coords)
+        coord = coord_gen()
         stop = VehicleStop(coord.latitude, coord.longitude, arrival_time)
         stops.append(stop)
         t = arrival_time
@@ -42,21 +42,36 @@ def gen_random_vehicle_stops(num_stops, day_index, stop_coords):
     return stops
 
 
-# Generate random coords from a center outwards.
-def gen_random_coords(size, center, rad):
-    fake = Faker()
+def gen_random_coords(size, coord_gen):
     coords = []
-    Coord = namedtuple("Coord", ["latitude", "longitude"])
 
     for _ in range(size):
-        lat = fake.coordinate(center=center[0], radius=rad)
-        lon = fake.coordinate(center=center[1], radius=rad)
-        coords.append(Coord(float(lat), float(lon)))
+        coords.append(coord_gen())
 
     return coords
 
 
+def create_coord_generator(center, rad):
+    gen = Faker()
+
+    def f():
+        return gen_random_coord(center, rad, gen)
+
+    return f
+
+
 # Private Helpers
+Coord = namedtuple("Coord", ["latitude", "longitude"])
+
+
+# Generate random coords from a center outwards.
+def gen_random_coord(center, rad, generator):
+    lat = generator.coordinate(center=center[0], radius=rad)
+    lon = generator.coordinate(center=center[1], radius=rad)
+
+    return Coord(float(lat), float(lon))
+
+
 def gen_random_sec_increment():
     inc_10_mins = 600
     # Pick out a random increment in a range

@@ -3,8 +3,9 @@ import random as rnd
 
 from vehicle import read_vehicles
 from vehicle_stop import (
-    gen_random_vehicle_stops,
+    create_coord_generator,
     gen_random_coords,
+    gen_random_vehicle_stops,
 )
 from driver import read_driver_names, gen_random_drivers
 
@@ -26,15 +27,17 @@ def read_csv_data(vehicles_path, names_path):
 def gen_day_samples(num_days, max_vehicle_sz, max_stops, center, rad, data):
     day_stops = []
 
+    coord_gen = create_coord_generator(center, rad)
+
     for i in range(num_days):
-        s = gen_day_sample(max_vehicle_sz, max_stops, i, center, rad, data)
+        s = gen_day_sample(max_vehicle_sz, max_stops, i, coord_gen, data)
         day_stops.append(s)
 
     return day_stops
 
 
 # Private Helpers
-def gen_day_sample(max_vehicle_size, max_stops, day_idx, center, rad, data):
+def gen_day_sample(max_vehicle_size, max_stops, day_idx, coord_gen, data):
     vehicles = data.vehicles
 
     assert max_vehicle_size > 0 and max_vehicle_size <= len(vehicles)
@@ -44,18 +47,15 @@ def gen_day_sample(max_vehicle_size, max_stops, day_idx, center, rad, data):
     vehicle_size = rnd.choice(range(1, max_vehicle_size + 1))
     names = data.names.female_names + data.names.male_names
 
-    coords = gen_random_coords(vehicle_size * max_stops, center, rad)
-    start_coords = coords[:vehicle_size]
-    stop_coords = coords[vehicle_size:]
-
+    stop_coords = gen_random_coords(vehicle_size, coord_gen)
     drivers = gen_random_drivers(vehicle_size, names, data.names.surnames)
 
-    keys = list(zip(vehicles, drivers, start_coords))
+    keys = list(zip(vehicles, drivers, stop_coords))
     vehicle_stops = {}
 
     for key in keys:
         num_stops = rnd.choice(range(1, max_stops + 1))
-        stops = gen_random_vehicle_stops(num_stops, day_idx, stop_coords)
+        stops = gen_random_vehicle_stops(num_stops, day_idx, coord_gen)
         vehicle_stops[key] = stops
 
     return vehicle_stops

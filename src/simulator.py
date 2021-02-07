@@ -25,6 +25,15 @@ def read_csv_data(vehicles_path, names_path):
 # dictionary is meant to represent a simulated day indexed by the position
 # in the list. The `Coord` in the key is the vehicle's start coordinate.
 def gen_day_samples(num_days, max_vehicle_sz, max_stops, center, rad, data):
+    NUM_DAYS_UPPER_BOUND = 365
+    STOP_UPPER_BOUND = 48
+
+    if num_days < 1 or num_days > NUM_DAYS_UPPER_BOUND:
+        raise Exception(f"# of days isn't in [1, {NUM_DAYS_UPPER_BOUND}]")
+
+    if max_stops < 1 or max_stops > STOP_UPPER_BOUND:
+        raise Exception(f"# of stops isn't in [1, {STOP_UPPER_BOUND}]")
+
     day_stops = []
 
     coord_gen = create_coord_generator(center, rad)
@@ -41,8 +50,6 @@ def gen_day_sample(max_vehicle_size, max_stops, day_idx, coord_gen, data):
     vehicles = data.vehicles
 
     assert max_vehicle_size > 0 and max_vehicle_size <= len(vehicles)
-    assert max_stops > 0 and max_stops < 100
-    assert day_idx >= 0 and day_idx < 100
 
     vehicle_size = rnd.choice(range(1, max_vehicle_size + 1))
     names = data.names.female_names + data.names.male_names

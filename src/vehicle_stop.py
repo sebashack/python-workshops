@@ -33,7 +33,8 @@ def gen_random_vehicle_stops(num_stops, day_index, coord_gen):
     t = increment_utc_by_days(utc, day_index)
 
     for _ in range(num_stops):
-        arrival_time = increment_utc_by_secs(t, gen_random_sec_increment())
+        sec_increment = gen_random_sec_increment(num_stops)
+        arrival_time = increment_utc_by_secs(t, sec_increment)
         coord = coord_gen()
         stop = VehicleStop(coord.latitude, coord.longitude, arrival_time)
         stops.append(stop)
@@ -72,13 +73,13 @@ def gen_random_coord(center, rad, generator):
     return Coord(float(lat), float(lon))
 
 
-def gen_random_sec_increment():
-    inc_10_mins = 600
-    # Pick out a random increment in a range
-    # [10mins, 20mins, 30mins, ..., 120mins], 120mins = 2hs
-    increment = rnd.choice(range(inc_10_mins, 13 * inc_10_mins, inc_10_mins))
+def gen_random_sec_increment(num_stops):
+    hour_mins = 60
+    day_mins = 24 * hour_mins
+    steps = round(day_mins / num_stops)
+    secs = rnd.choice(range(1, steps + 1)) * hour_mins
 
-    return increment
+    return secs
 
 
 def increment_utc_by_days(utc, num_days):

@@ -17,6 +17,7 @@ def main(argv):
     # (lat = 6.251404, lon = -75.575261)
     medellin_center = (6.251404, -75.575261)
     rad = 0.055
+
     start = time.time()
     gen_day_samples(30, 1000, 40, medellin_center, rad, csv_data)
     end = time.time()

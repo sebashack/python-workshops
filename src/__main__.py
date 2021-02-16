@@ -2,7 +2,11 @@ import sys
 import os
 import time
 
-from simulator import read_csv_data, gen_day_samples
+from simulator import (
+    read_csv_data,
+    gen_vehicle_day_samples,
+    gen_vehicle_day_samples_flattened,
+)
 
 
 def main(argv):
@@ -19,12 +23,15 @@ def main(argv):
     rad = 0.055
 
     start = time.time()
-    gen_day_samples(30, 1000, 40, medellin_center, rad, csv_data)
+    samples = gen_vehicle_day_samples_flattened(
+        30, 1000, 40, medellin_center, rad, csv_data
+    )
     end = time.time()
 
     diff = end - start
 
     print(f"End of simulation. {diff} sec(s) elapsed ...")
+    print(f"{len(samples)}")
 
 
 def mk_csv_file_path(path):

@@ -8,8 +8,14 @@ from simulator import (
     gen_vehicle_day_samples_flattened,
 )
 
-from sorting import quick_sort
-from utils import gen_random_integers, exec_time, is_asc_ordered
+from sorting import quick_sort, merge_sort, bubble_sort
+from utils import (
+    gen_random_integers_with_seed,
+    exec_time,
+    is_asc_ordered,
+    plot_xs_vs_ys,
+    gen_sort_method_data_points,
+)
 
 
 def main(argv):
@@ -36,9 +42,19 @@ def main(argv):
     # print(f"End of simulation. {diff} sec(s) elapsed ...")
     # print(f"{len(samples)}")
 
-    ls = gen_random_integers(1000)
+    bubble_sort_plot_data = gen_sort_method_data_points(
+        6000, 200, bubble_sort, "bubble_sort", 10
+    )
+    quick_sort_plot_data = gen_sort_method_data_points(
+        100000, 500, quick_sort, "quick_sort", 10
+    )
+    merge_sort_plot_data = gen_sort_method_data_points(
+        100000, 500, merge_sort, "merge_sort", 10
+    )
 
-    print(exec_time(lambda: quick_sort(ls))[1])
+    plot_xs_vs_ys(
+        [bubble_sort_plot_data, merge_sort_plot_data, quick_sort_plot_data], "N", "TIME"
+    )
 
 
 def mk_csv_file_path(path):

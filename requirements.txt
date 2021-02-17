@@ -1,1 +1,2 @@
 faker==5.0.1
+matplotlib==3.3.4

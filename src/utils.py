@@ -1,5 +1,42 @@
+import matplotlib.pyplot as plt
 import random as rdn
 import time
+
+
+# Plotting
+def plot_xs_vs_ys(data, x_label, y_label):
+    for (xs, ys, label) in data:
+        plt.plot(xs, ys)
+        plt.annotate(label, xy=(xs[-1], ys[-1]))
+
+    plt.ylabel(x_label)
+    plt.xlabel(y_label)
+    plt.show()
+
+
+def gen_sort_method_data_points(upper, step, sort_method, label, seed):
+    assert upper > step
+
+    up = upper + 2
+    xs = []
+    ys = []
+
+    for n in range(1, up, step):
+        ls = gen_random_integers_with_seed(n, seed)
+        t = gen_sort_method_data_point(ls, sort_method)
+        xs.append(n)
+        ys.append(t)
+
+    return (xs, ys, label)
+
+
+def gen_sort_method_data_point(ls, sort_method):
+    start = time.time()
+    sort_method(ls)
+    end = time.time()
+    diff = round(end - start, 5)
+
+    return diff
 
 
 # Measure time
@@ -12,6 +49,16 @@ def exec_time(f):
 
 
 # Generators
+def gen_random_integers_with_seed(n, seed):
+    rdn.seed(seed)
+
+    nums = []
+    for _ in range(n):
+        nums.append(rdn.randint(1, n))
+
+    return nums
+
+
 def gen_random_integers(n):
     nums = []
     for _ in range(n):

@@ -51,9 +51,19 @@ def main(argv):
     merge_sort_plot_data = gen_sort_method_data_points(
         100000, 500, merge_sort, "merge_sort", 10
     )
+    py_sort_plot_data = gen_sort_method_data_points(
+        100000, 500, lambda l: l.sort(), "py_sort", 10
+    )
 
     plot_xs_vs_ys(
-        [bubble_sort_plot_data, merge_sort_plot_data, quick_sort_plot_data], "N", "TIME"
+        [
+            bubble_sort_plot_data,
+            merge_sort_plot_data,
+            quick_sort_plot_data,
+            py_sort_plot_data,
+        ],
+        "TIME",
+        "N",
     )
 
 

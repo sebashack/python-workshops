@@ -1,5 +1,4 @@
 from enum import Enum
-import csv
 
 
 class Category(Enum):
@@ -20,23 +19,6 @@ class Vehicle:
         return f'Vehicle(plate="{self.plate}", category={self.category})'
 
 
-def read_vehicles(csv_file_path):
-    vehicles = []
-
-    with open(csv_file_path, newline="\n") as csv_file:
-        csv_reader = csv.DictReader(csv_file)
-
-        for row in csv_reader:
-            plate = row["plate"]
-            category = str_to_category(row["category"])
-            vehicle = Vehicle(plate, category)
-
-            vehicles.append(vehicle)
-
-    return vehicles
-
-
-# Private Helpers
 def str_to_category(s):
     if s == "motor-bike":
         return Category.MotorBike

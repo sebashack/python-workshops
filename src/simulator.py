@@ -1,12 +1,12 @@
 from collections import namedtuple
 import random as rnd
-from vehicle import read_vehicles
 from vehicle_stop import (
     create_coord_generator,
     gen_random_coords,
     gen_random_vehicle_stops,
 )
-from driver import read_driver_names, gen_random_drivers
+from driver import gen_random_drivers
+from readers import read_vehicles, read_driver_names
 from vehicle_day import VehicleDay
 
 

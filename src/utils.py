@@ -1,7 +1,6 @@
 import matplotlib.pyplot as plt
 import random as rnd
 import time
-import os
 
 
 # Plotting
@@ -76,8 +75,3 @@ def is_asc_ordered(ls):
             return False
 
     return True
-
-
-# Path
-def mk_csv_file_path(path):
-    return str(os.path.join(os.getcwd(), path))

@@ -19,6 +19,17 @@ class Vehicle:
         return f'Vehicle(plate="{self.plate}", category={self.category})'
 
 
+def category_to_str(cat):
+    if cat == Category.MotorBike:
+        return "motor-bike"
+
+    if cat == Category.SmallTruck:
+        return "small-truck"
+
+    if cat == Category.BigTruck:
+        return "big-truck"
+
+
 def str_to_category(s):
     if s == "motor-bike":
         return Category.MotorBike

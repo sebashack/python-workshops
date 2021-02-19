@@ -4,9 +4,8 @@ from simulator import (
     gen_vehicle_day_samples,
     gen_day_samples_as_dict,
     flatten_vehicle_day_samples,
-    read_csv_data,
 )
-from utils import mk_csv_file_path
+from csv_utils import mk_csv_file_path, read_csv_data
 
 
 class TestSimulator(unittest.TestCase):

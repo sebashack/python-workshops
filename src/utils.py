@@ -1,5 +1,5 @@
 import matplotlib.pyplot as plt
-import random as rdn
+import random as rnd
 import time
 
 
@@ -49,11 +49,11 @@ def exec_time(f):
 
 # Generators
 def gen_random_integers_with_seed(n, seed):
-    rdn.seed(seed)
+    rnd.seed(seed)
 
     nums = []
     for _ in range(n):
-        nums.append(rdn.randint(1, n))
+        nums.append(rnd.randint(1, n))
 
     return nums
 
@@ -61,7 +61,7 @@ def gen_random_integers_with_seed(n, seed):
 def gen_random_integers(n):
     nums = []
     for _ in range(n):
-        nums.append(rdn.randint(1, n))
+        nums.append(rnd.randint(1, n))
 
     return nums
 

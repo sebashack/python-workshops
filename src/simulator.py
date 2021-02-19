@@ -6,7 +6,7 @@ from vehicle_stop import (
     gen_random_vehicle_stops,
 )
 from driver import gen_random_drivers
-from readers import read_vehicles, read_driver_names
+from csv_utils import read_vehicles, read_driver_names
 from vehicle_day import VehicleDay
 
 

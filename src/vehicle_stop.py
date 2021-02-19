@@ -62,7 +62,6 @@ def create_coord_generator(center, rad):
     return f
 
 
-# Private Helpers
 Coord = namedtuple("Coord", ["latitude", "longitude"])
 
 

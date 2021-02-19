@@ -10,8 +10,7 @@ class Driver:
         return self.idx == other.idx
 
     def __hash__(self):
-        idx = self.idx[:]
-        return hash(idx)
+        return hash(self.idx)
 
     def __str__(self):
         return f'Driver(idx={self.idx}, name="{self.name}")'

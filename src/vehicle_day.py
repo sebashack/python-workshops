@@ -7,7 +7,19 @@ class VehicleDay:
         self.stops = stops
 
     def __eq__(self, other):
-        return self.driver == other.driver
+        return self.vehicle == other.vehicle and self.initial_time == other.initial_time
+
+    def __lt__(self, other):
+        return self.initial_time < other.initial_time
+
+    def __le__(self, other):
+        return self.initial_time <= other.initial_time
+
+    def __gt__(self, other):
+        return self.initial_time > other.initial_time
+
+    def __ge__(self, other):
+        return self.initial_time >= other.initial_time
 
     def __str__(self):
         v = self.vehicle

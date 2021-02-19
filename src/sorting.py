@@ -1,3 +1,4 @@
+# Bubble sort
 def bubble_sort(arr):
     n = len(arr)
 
@@ -50,6 +51,16 @@ def merge(left_ls, right_ls):
 
 
 # Quick sort
+def quick_sort_by(ls, f):
+    if len(ls) <= 1:
+        return ls
+
+    pivot = ls[0]
+    higher = [x for x in ls[1:] if f(x) > f(pivot)]
+    lower = [x for x in ls[1:] if f(x) <= f(pivot)]
+    return quick_sort_by(lower, f) + [pivot] + quick_sort_by(higher, f)
+
+
 def quick_sort(ls):
     if len(ls) <= 1:
         return ls

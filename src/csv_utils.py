@@ -1,8 +1,13 @@
 import os
 from collections import namedtuple
 import csv
+from datetime import datetime
 
+from driver import Driver
+from vehicle_stop import VehicleStop, Coord
 from vehicle import Vehicle, str_to_category, category_to_str
+from vehicle_day import VehicleDay
+from sorting import quick_sort_by, quick_sort
 
 
 def read_csv_data(vehicles_path, names_path):
@@ -53,6 +58,46 @@ def read_driver_names(csv_file_path):
         Names = namedtuple("Names", ["female_names", "male_names", "surnames"])
 
     return Names(female_names, male_names, surnames)
+
+
+def read_vehicle_days(csv_file_path):
+    entries = {}
+
+    with open(csv_file_path, newline="\n") as csv_file:
+        csv_reader = csv.DictReader(csv_file)
+
+        for row in csv_reader:
+            idx = row["citizen-id"]
+            name = row["name"]
+            plate = row["vehicle-plate"]
+            category = str_to_category(row["vehicle-type"])
+            t = datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S")
+            stop = VehicleStop(float(row["latitude"]), float(row["longitude"]), t)
+
+            key = (idx, name, plate, category, t.year, t.month, t.day)
+            if key in entries:
+                entries[key].append(stop)
+            else:
+                entries[key] = [stop]
+
+    days = []
+    for (key, stops) in entries.items():
+        sorted_day = quick_sort_by(stops, lambda stop: stop.arrival_time)
+        driver = Driver(key[0], key[1])
+        vehicle = Vehicle(key[2], key[3])
+        init = sorted_day.pop(0)
+
+        days.append(
+            VehicleDay(
+                vehicle,
+                driver,
+                init.arrival_time,
+                Coord(init.latitude, init.longitude),
+                sorted_day,
+            )
+        )
+
+    return quick_sort(days)
 
 
 def write_vehicle_days(csv_path, days):

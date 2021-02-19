@@ -12,6 +12,12 @@ class Vehicle:
         self.category = category
         self.plate = plate
 
+    def __hash__(self):
+        return hash(self.plate)
+
+    def __eq__(self, other):
+        return self.plate == other.plate
+
     def __str__(self):
         return f'Vehicle(plate="{self.plate}", category={self.category})'
 

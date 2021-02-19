@@ -11,6 +11,9 @@ set-py-venv:
 set-py-venv-with-deps: set-py-venv
 	${VENV_DIR}/bin/pip install -r requirements.txt
 
+.PHONY: test
+test:
+	${VENV_DIR}/bin/python -m unittest discover
 
 .PHONY: check-style
 check-style:

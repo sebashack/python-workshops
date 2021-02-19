@@ -5,6 +5,9 @@ class VehicleDay:
         self.initial_coord = initial_coord
         self.stops = stops
 
+    def __eq__(self, other):
+        return self.driver == other.driver
+
     def __str__(self):
         v = self.vehicle
         d = self.driver

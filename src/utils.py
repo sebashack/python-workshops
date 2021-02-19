@@ -17,11 +17,10 @@ def plot_xs_vs_ys(data, x_label, y_label):
 def gen_sort_method_data_points(upper, step, sort_method, label, seed):
     assert upper > step
 
-    up = upper + 2
     xs = []
     ys = []
 
-    for n in range(1, up, step):
+    for n in range(0, upper, step):
         ls = gen_random_integers_with_seed(n, seed)
         t = gen_sort_method_data_point(ls, sort_method)
         xs.append(n)

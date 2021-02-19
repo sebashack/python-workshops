@@ -30,7 +30,8 @@ class VehicleStop:
 def gen_random_vehicle_stops(num_stops, day_index, coord_gen):
     stops = []
     utc = datetime.utcnow().replace(hour=0, minute=0, second=0, microsecond=0)
-    t = increment_utc_by_days(utc, day_index)
+    init_time = increment_utc_by_days(utc, day_index)
+    t = init_time
 
     for _ in range(num_stops):
         sec_increment = gen_random_sec_increment(num_stops)
@@ -40,7 +41,7 @@ def gen_random_vehicle_stops(num_stops, day_index, coord_gen):
         stops.append(stop)
         t = arrival_time
 
-    return stops
+    return (init_time, stops)
 
 
 def gen_random_coords(size, coord_gen):

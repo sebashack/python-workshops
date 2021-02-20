@@ -1,3 +1,7 @@
+from sorting import quick_sort_by
+from vehicle_stop import compute_coord_distance, VehicleStop
+
+
 class VehicleDay:
     def __init__(self, vehicle, driver, initial_time, initial_coord, stops):
         self.vehicle = vehicle
@@ -40,6 +44,21 @@ class VehicleDay:
 
         s = f"VehicleDay(vehicle={v}, driver={d}, initial_time={it}, initial_coord={ic}, stops={ss})"
         return s
+
+    def sort_stops_by_time(self):
+        self.stops = quick_sort_by(self.stops, lambda stop: stop.arrival_time)
+
+    # This method assumes that the stops are sorted by arrival_time.
+    # The output is in Kilometers.
+    def compute_route_distance(self):
+        stops = [VehicleStop(self.initial_coord, self.initial_time)] + self.stops
+        tail = stops[1:]
+        d = 0
+
+        for (stop1, stop2) in zip(stops, tail):
+            d += compute_coord_distance(stop1.coord, stop2.coord)
+
+        return d
 
     def stops_length(self):
         return len(self.stops)

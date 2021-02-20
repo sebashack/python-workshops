@@ -72,7 +72,9 @@ def read_vehicle_days(csv_file_path):
             plate = row["vehicle-plate"]
             category = str_to_category(row["vehicle-type"])
             t = datetime.strptime(row["time"], "%Y-%m-%d %H:%M:%S")
-            stop = VehicleStop(float(row["latitude"]), float(row["longitude"]), t)
+            stop = VehicleStop(
+                Coord(float(row["latitude"]), float(row["longitude"])), t
+            )
 
             key = (idx, name, plate, category, t.year, t.month, t.day)
             if key in entries:
@@ -92,7 +94,7 @@ def read_vehicle_days(csv_file_path):
                 vehicle,
                 driver,
                 init.arrival_time,
-                Coord(init.latitude, init.longitude),
+                Coord(init.latitude(), init.longitude()),
                 sorted_day,
             )
         )
@@ -136,8 +138,8 @@ def write_vehicle_days(csv_path, days):
             )
 
             for stop in day.stops:
-                lat = str(stop.latitude)
-                lon = str(stop.longitude)
+                lat = str(stop.latitude())
+                lon = str(stop.longitude())
                 t = str(stop.arrival_time)
 
                 writer.writerow(

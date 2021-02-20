@@ -9,26 +9,31 @@ Coord = namedtuple("Coord", ["latitude", "longitude"])
 
 
 class VehicleStop:
-    def __init__(self, latitude, longitude, arrival_time):
-        self.latitude = latitude
-        self.longitude = longitude
+    def __init__(self, coord, arrival_time):
+        self.coord = coord
         self.arrival_time = arrival_time
 
     def __str__(self):
-        la = ("latitude", self.latitude)
-        lg = ("longitude", self.longitude)
+        la = ("latitude", self.coord.latitude)
+        lg = ("longitude", self.coord.longitude)
         at = ("arrival_time", self.arrival_time)
         s = f"VehicleStop({la[0]}={la[1]}, {lg[0]}={lg[1]}, {at[0]}={at[1]})"
 
         return s
 
     def __repr__(self):
-        la = ("latitude", self.latitude)
-        lg = ("longitude", self.longitude)
+        la = ("latitude", self.coord.latitude)
+        lg = ("longitude", self.coord.longitude)
         at = ("arrival_time", self.arrival_time)
         s = f"VehicleStop({la[0]}={la[1]}, {lg[0]}={lg[1]}, {at[0]}={at[1]})"
 
         return s
+
+    def latitude(self):
+        return self.coord.latitude
+
+    def longitude(self):
+        return self.coord.longitude
 
 
 def gen_random_vehicle_stops(num_stops, day_index, coord_gen):
@@ -41,7 +46,7 @@ def gen_random_vehicle_stops(num_stops, day_index, coord_gen):
         sec_increment = gen_random_sec_increment(num_stops)
         arrival_time = increment_utc_by_secs(t, sec_increment)
         coord = coord_gen()
-        stop = VehicleStop(coord.latitude, coord.longitude, arrival_time)
+        stop = VehicleStop(coord, arrival_time)
         stops.append(stop)
         t = arrival_time
 

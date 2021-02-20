@@ -9,7 +9,7 @@ from simulator import (
 from sorting import quick_sort
 from csv_utils import mk_csv_file_path, read_csv_data, read_vehicle_days, write_vehicle_days
 from vehicle_stop import compute_coord_distance, Coord, VehicleStop
-from vehicle_day import VehicleDay
+from vehicle_day import VehicleDay, sort_vehicle_days_by_route_distance
 from vehicle import Vehicle, Category
 from driver import Driver
 
@@ -39,6 +39,17 @@ class TestSimulator(unittest.TestCase):
         samples = flatten_day_samples(gen_day_samples_with_variable_size(30, 100, 20, medellin_center, rad, csv_data))
         total_stops = sum(map(lambda vd: vd.stops_length(), samples))
         self.assertLessEqual(total_stops, 30 * 100 * 20)
+
+    def test_day_samples_have_stops_in_asc_order_by_time(self):
+        vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
+        names_csv_path = mk_csv_file_path("test_data/person_list.csv")
+        csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
+        medellin_center = (6.251404, -75.575261)
+        rad = 0.055
+        samples = flatten_day_samples(gen_day_samples(30, 30, 20, medellin_center, rad, csv_data))
+
+        for day in samples:
+            self.assertTrue(is_asc_ordered(day.stops))
 
     def test_no_duplicated_drivers_in_same_day_for_gen_vehicle_day_samples(self):
         vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
@@ -165,10 +176,35 @@ class TestSimulator(unittest.TestCase):
         self.assertEqual(stops, day.stops)
         self.assertLessEqual(abs(day.compute_route_distance() - expected_distance), tolerance)
 
+    def test_day_samples_have_asc_order_by_route_distance(self):
+        # Run simulation for 30 days, a max of 100 vehicles per day and
+        # a max of 20 stops per vehicle per day.
+        vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
+        names_csv_path = mk_csv_file_path("test_data/person_list.csv")
+        csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
+        medellin_center = (6.251404, -75.575261)
+        rad = 0.055
+        samples = flatten_day_samples(gen_day_samples_with_variable_size(30, 10, 20, medellin_center, rad, csv_data))
+
+        def f(day):
+            return day.compute_route_distance()
+
+        self.assertTrue(is_asc_ordered_by(sort_vehicle_days_by_route_distance(samples), f))
+
 
 # Helpers
 def no_duplicates_check(ls):
     return len(ls) == len(set(ls))
+
+
+def is_asc_ordered_by(ls, f):
+    tail = ls[1:]
+
+    for (x, y) in zip(ls, tail):
+        if f(x) > f(y):
+            return False
+
+    return True
 
 
 def is_asc_ordered(ls):

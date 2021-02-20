@@ -29,6 +29,18 @@ class VehicleStop:
 
         return s
 
+    def __lt__(self, other):
+        return self.arrival_time < other.arrival_time
+
+    def __le__(self, other):
+        return self.arrival_time <= other.arrival_time
+
+    def __gt__(self, other):
+        return self.arrival_time > other.arrival_time
+
+    def __ge__(self, other):
+        return self.arrival_time >= other.arrival_time
+
     def latitude(self):
         return self.coord.latitude
 

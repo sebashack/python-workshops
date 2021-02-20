@@ -62,3 +62,7 @@ class VehicleDay:
 
     def stops_length(self):
         return len(self.stops)
+
+
+def sort_vehicle_days_by_route_distance(days):
+    return quick_sort_by(days, lambda v: v.compute_route_distance())

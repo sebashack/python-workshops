@@ -21,6 +21,12 @@ make check-style
 make style
 ```
 
+## Run tests
+
+```
+make test
+```
+
 ## Activate virtual environment
 
 ```
@@ -35,6 +41,14 @@ deactivate
 
 ## Run code
 
+If venv is active:
+
 ```
 python src
+```
+
+otherwise
+
+```
+make run
 ```

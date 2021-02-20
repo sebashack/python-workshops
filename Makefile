@@ -11,6 +11,10 @@ set-py-venv:
 set-py-venv-with-deps: set-py-venv
 	${VENV_DIR}/bin/pip install -r requirements.txt
 
+.PHONY: run
+run:
+	${VENV_DIR}/bin/python src
+
 .PHONY: test
 test:
 	${VENV_DIR}/bin/python -m unittest discover

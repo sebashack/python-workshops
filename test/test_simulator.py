@@ -7,6 +7,7 @@ from simulator import (
 )
 from sorting import quick_sort
 from csv_utils import mk_csv_file_path, read_csv_data, read_vehicle_days, write_vehicle_days
+from vehicle_stop import compute_coord_distance, Coord
 
 
 class TestSimulator(unittest.TestCase):
@@ -94,6 +95,30 @@ class TestSimulator(unittest.TestCase):
 
         self.assertTrue(vehicle_days == quick_sort(sample_flattened))
         self.assertTrue(is_asc_ordered(vehicle_days))
+
+    def test_compute_coord_distance_returns_expected_values(self):
+        tolerance = 0.001
+
+        c1 = Coord(6.222833, -75.530807)
+        c2 = Coord(6.20579, -75.584041)
+        d = compute_coord_distance(c1, c2)
+        expected_distance = 6.182  # Km
+
+        self.assertLessEqual(abs(d - expected_distance), tolerance)
+
+        c1 = Coord(6.240636, -75.579491)
+        c2 = Coord(6.271504, -75.565508)
+        d = compute_coord_distance(c1, c2)
+        expected_distance = 3.764  # Km
+
+        self.assertLessEqual(abs(d - expected_distance), tolerance)
+
+        c1 = Coord(6.253964, -75.581604)
+        c2 = Coord(6.199261, -75.564502)
+        d = compute_coord_distance(c1, c2)
+        expected_distance = 6.37  # Km
+
+        self.assertLessEqual(abs(d - expected_distance), tolerance)
 
 
 # Helpers

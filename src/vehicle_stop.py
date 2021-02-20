@@ -2,6 +2,10 @@ from collections import namedtuple
 import random as rnd
 from datetime import datetime, timedelta
 from faker import Faker
+from math import sin, cos, sqrt, atan2, radians
+
+
+Coord = namedtuple("Coord", ["latitude", "longitude"])
 
 
 class VehicleStop:
@@ -62,9 +66,6 @@ def create_coord_generator(center, rad):
     return f
 
 
-Coord = namedtuple("Coord", ["latitude", "longitude"])
-
-
 # Generate random coords from a center outwards.
 def gen_random_coord(center, rad, generator):
     lat = generator.coordinate(center=center[0], radius=rad)
@@ -93,3 +94,23 @@ def increment_utc_by_secs(utc, secs):
     secs = timedelta(seconds=secs)
 
     return utc + secs
+
+
+# Compute the distance, in Km, between two Geo Coords
+def compute_coord_distance(c1, c2):
+    EARTH_RADIUS = 6371.0  # approx. earth's radious in km
+
+    lat1 = radians(c1.latitude)
+    lon1 = radians(c1.longitude)
+    lat2 = radians(c2.latitude)
+    lon2 = radians(c2.longitude)
+
+    dlat = lat2 - lat1
+    dlon = lon2 - lon1
+
+    a = sin(dlat / 2) ** 2 + cos(lat1) * cos(lat2) * sin(dlon / 2) ** 2
+    c = 2 * atan2(sqrt(a), sqrt(1 - a))
+
+    distance = EARTH_RADIUS * c
+
+    return distance

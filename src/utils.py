@@ -64,14 +64,3 @@ def gen_random_integers(n):
         nums.append(rnd.randint(1, n))
 
     return nums
-
-
-# Predicates
-def is_asc_ordered(ls):
-    tail = ls[1:]
-
-    for (x, y) in zip(ls, tail):
-        if x > y:
-            return False
-
-    return True

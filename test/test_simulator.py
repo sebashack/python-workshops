@@ -2,7 +2,6 @@ import unittest
 
 from simulator import (
     gen_vehicle_day_samples,
-    gen_day_samples_as_dict,
     flatten_vehicle_day_samples,
 )
 from sorting import quick_sort
@@ -57,21 +56,6 @@ class TestSimulator(unittest.TestCase):
 
             for stop in vehicle_day.stops:
                 self.assertTrue(init_time < stop.arrival_time)
-
-    def test_init_time_in_key_less_than_stop_times(self):
-        vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
-        names_csv_path = mk_csv_file_path("test_data/person_list.csv")
-        csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
-        medellin_center = (6.251404, -75.575261)
-        rad = 0.055
-        sample = gen_day_samples_as_dict(10, 10, 10, medellin_center, rad, csv_data)
-
-        for day in sample:
-            for key in day:
-                stops = day[key]
-                (_, _, init_time, _) = key
-                for t in stops:
-                    self.assertTrue(init_time < t.arrival_time)
 
     def test_read_vehicle_days_are_equal_to_sorted_flattened_data(self):
         vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")

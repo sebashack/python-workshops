@@ -14,15 +14,14 @@ def plot_xs_vs_ys(data, x_label, y_label):
     plt.show()
 
 
-def gen_sort_method_data_points(upper, step, sort_method, label, seed):
+def gen_sort_method_data_points(upper, step, sort_method, label, gen):
     assert upper > step
 
     xs = []
     ys = []
 
     for n in range(0, upper, step):
-        ls = gen_random_integers_with_seed(n, seed)
-        t = gen_sort_method_data_point(ls, sort_method)
+        t = gen_sort_method_data_point(gen(n), sort_method)
         xs.append(n)
         ys.append(t)
 

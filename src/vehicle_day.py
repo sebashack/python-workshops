@@ -40,3 +40,6 @@ class VehicleDay:
 
         s = f"VehicleDay(vehicle={v}, driver={d}, initial_time={it}, initial_coord={ic}, stops={ss})"
         return s
+
+    def stops_length(self):
+        return len(self.stops)

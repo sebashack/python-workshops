@@ -2,6 +2,7 @@ import unittest
 
 from simulator import (
     gen_day_samples,
+    gen_day_samples_with_variable_size,
     flatten_day_samples,
 )
 from sorting import quick_sort
@@ -9,17 +10,37 @@ from csv_utils import mk_csv_file_path, read_csv_data, read_vehicle_days, write_
 
 
 class TestSimulator(unittest.TestCase):
+    def test_day_samples_have_correct_size_when_no_variable_size(self):
+        # Run simulation for 30 days, 100 vehicles per day and 20 stops per vehicle per day.
+        # This creates locations approximately in "El area Metropolitana".
+        # Medellin's center is located approximately at (lat = 6.251404, lon = -75.575261)
+        vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
+        names_csv_path = mk_csv_file_path("test_data/person_list.csv")
+        csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
+        medellin_center = (6.251404, -75.575261)
+        rad = 0.055
+        samples = flatten_day_samples(gen_day_samples(30, 100, 20, medellin_center, rad, csv_data))
+        total_stops = sum(map(lambda vd: vd.stops_length(), samples))
+        self.assertEqual(total_stops, 30 * 100 * 20)
+
+    def test_day_samples_have_size_equal_or_less_than_max_when_variable_size(self):
+        # Run simulation for 30 days, a max of 100 vehicles per day and
+        # a max of 20 stops per vehicle per day.
+        vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
+        names_csv_path = mk_csv_file_path("test_data/person_list.csv")
+        csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
+        medellin_center = (6.251404, -75.575261)
+        rad = 0.055
+        samples = flatten_day_samples(gen_day_samples_with_variable_size(30, 100, 20, medellin_center, rad, csv_data))
+        total_stops = sum(map(lambda vd: vd.stops_length(), samples))
+        self.assertLessEqual(total_stops, 30 * 100 * 20)
+
     def test_no_duplicated_drivers_in_same_day_for_gen_vehicle_day_samples(self):
         vehicle_csv_path = mk_csv_file_path("test_data/vehicle_list.csv")
         names_csv_path = mk_csv_file_path("test_data/person_list.csv")
         csv_data = read_csv_data(vehicle_csv_path, names_csv_path)
         medellin_center = (6.251404, -75.575261)
         rad = 0.055
-        # Run simulation for 10 days, a max number of 10 vehicles per day
-        # and a max number of 10 stops per vehicle per day.
-        # This creates locations approximately in "El area Metropolitana".
-        # Medellin's center is located approximately at
-        # (lat = 6.251404, lon = -75.575261)
         samples = gen_day_samples(10, 10, 10, medellin_center, rad, csv_data)
 
         for vehicle_days in samples:
@@ -64,7 +85,7 @@ class TestSimulator(unittest.TestCase):
         medellin_center = (6.251404, -75.575261)
         rad = 0.055
 
-        sample = gen_day_samples(30, 150, 30, medellin_center, rad, csv_data)
+        sample = gen_day_samples(30, 100, 15, medellin_center, rad, csv_data)
         sample_flattened = flatten_day_samples(sample)
         entries_path = mk_csv_file_path("test_data/entries.csv")
 

@@ -45,7 +45,15 @@ class VehicleDay:
         s = f"VehicleDay(vehicle={v}, driver={d}, initial_time={it}, initial_coord={ic}, stops={ss})"
         return s
 
-    def sort_stops_by_time(self):
+    def gen_route_by_distance_against_init_coord(self):
+        stops = quick_sort_by(
+            self.stops,
+            lambda stop: compute_coord_distance(self.initial_coord, stop.coord),
+        )
+
+        return (self.initial_coord, stops)
+
+    def sort_stops_by_arrival_time(self):
         self.stops = quick_sort_by(self.stops, lambda stop: stop.arrival_time)
 
     # This method assumes that the stops are sorted by arrival_time.

@@ -2,3 +2,4 @@ faker==5.0.1
 matplotlib==3.3.4
 numpy==1.20.1
 unittest2==1.1.0
+beautifulsoup4==4.9.2

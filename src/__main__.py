@@ -1,5 +1,8 @@
 import sys
 
+from http_utils import create_http_connection, create_https_connection
+from scraping import scrape_html_doc
+from kmp import kmp_search
 from sorting import quick_sort, merge_sort, bubble_sort
 from edit_distance import minimum_edit_distance
 from utils import (
@@ -37,7 +40,15 @@ def main(argv):
     #     "N",
     # )
 
-    print(minimum_edit_distance("ABC", "DEF"))
+    # print(minimum_edit_distance("ABC", "DEF"))
+
+    #conn = create_https_connection("www.eafit.edu.co")
+    #conn.request("GET", "/")
+    #res = conn.getresponse()
+    #html_doc = res.read()
+
+    #scrape_html_doc(html_doc)
+    print(kmp_search("AAAB", "AAABBBAAABAAAB"))
 
 
 if __name__ == "__main__":

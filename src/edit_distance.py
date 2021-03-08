@@ -18,4 +18,4 @@ def minimum_edit_distance(source, target):
             else:
                 solution[r, c] = solution[r-1, c-1]
 
-    return solution
+    return solution[len(s) - 1, len(t) - 1]

@@ -1,5 +1,6 @@
 import sys
 
+from queens import make_board, solve_queens
 from http_utils import create_http_connection, create_https_connection
 from scraping import scrape_html_doc
 from kmp import kmp_search
@@ -40,15 +41,19 @@ def main(argv):
     #     "N",
     # )
 
-    # print(minimum_edit_distance("ABC", "DEF"))
+    # print(minimum_edit_distance("kitten", "saturday"))
 
-    #conn = create_https_connection("www.eafit.edu.co")
-    #conn.request("GET", "/")
-    #res = conn.getresponse()
-    #html_doc = res.read()
+    # conn = create_https_connection("www.eafit.edu.co")
+    # conn.request("GET", "/")
+    # res = conn.getresponse()
+    # html_doc = res.read()
 
-    #scrape_html_doc(html_doc)
-    print(kmp_search("AAAB", "AAABBBAAABAAAB"))
+    # scrape_html_doc(html_doc)
+    # print(kmp_search("A", "AABB"))
+    board = make_board(4)
+
+    print(solve_queens(board))
+    print(board)
 
 
 if __name__ == "__main__":

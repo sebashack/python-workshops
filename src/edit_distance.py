@@ -14,8 +14,8 @@ def minimum_edit_distance(source, target):
     for r in range(1, len(s)):
         for c in range(1, len(t)):
             if t[c] != s[r]:
-                solution[r, c] = min(solution[r-1, c], solution[r, c-1]) + 1
+                solution[r, c] = min(solution[r - 1, c], solution[r, c - 1]) + 1
             else:
-                solution[r, c] = solution[r-1, c-1]
+                solution[r, c] = solution[r - 1, c - 1]
 
     return solution[len(s) - 1, len(t) - 1]

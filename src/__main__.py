@@ -1,6 +1,13 @@
 import sys
 
 from queens import make_board, solve_queens
+from map_coloring import (
+    make_map,
+    map_coloring,
+    plot_map,
+    south_america,
+    south_american_map,
+)
 from http_utils import create_http_connection, create_https_connection
 from scraping import scrape_html_doc
 from kmp import kmp_search
@@ -50,10 +57,21 @@ def main(argv):
 
     # scrape_html_doc(html_doc)
     # print(kmp_search("A", "AABB"))
-    board = make_board(4)
 
-    print(solve_queens(board))
-    print(board)
+    # board = make_board(4)
+
+    # print(solve_queens(board))
+
+    # gmap = make_map(
+    #    5, [(0, 1), (0, 2), (0, 3), (1, 2), (1, 3), (2, 3), (4, 0), (4, 1), (4, 2)]
+    # )
+
+    solution = map_coloring(south_american_map, 4)
+
+    if solution is not None:
+        plot_map(south_american_map, solution, node_to_name=south_america)
+    else:
+        print("Problem has no solution")
 
 
 if __name__ == "__main__":

@@ -16,12 +16,12 @@ def kmp_search(pattern, text):
             j += 1
         else:
             if j != 0:
-                j = lps[j-1]
+                j = lps[j - 1]
             else:
                 i += 1
 
         if j == m:
-            result.append(i-j)
+            result.append(i - j)
             j = lps[j - 1]
 
     return result

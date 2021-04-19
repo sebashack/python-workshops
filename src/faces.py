@@ -1,6 +1,10 @@
 import cv2
 
 
+def read_image(path):
+    return cv2.imread(path)
+
+
 def detect_faces(image):
     face_cascade = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     face_classifier = cv2.CascadeClassifier(face_cascade)
@@ -36,8 +40,6 @@ def show_webcam(mirror=False):
 
 
 def add_rectangle(frame, faces):
-    print("Face found in image")
-
     color = (0, 255, 255)
     thickness = 15
 
@@ -47,3 +49,12 @@ def add_rectangle(frame, faces):
     return frame
 
 
+def showFaces(image, faces):
+    print("Found {0} faces".format(len(faces)))
+    color = (0, 255, 0)  # BGR: Green
+    grosor = 2
+    for (x, y, w, h) in faces:
+        cv2.rectangle(image, (x, y), (x + w, y + h), color, grosor)
+
+    cv2.imshow("found faces", image)
+    cv2.waitKey(0)

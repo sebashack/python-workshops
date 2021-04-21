@@ -1,10 +1,6 @@
 import cv2
 
 
-def read_image(path):
-    return cv2.imread(path)
-
-
 def detect_faces(image):
     face_cascade = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     face_classifier = cv2.CascadeClassifier(face_cascade)
@@ -49,7 +45,7 @@ def add_rectangle(frame, faces):
     return frame
 
 
-def showFaces(image, faces):
+def showDetectedFaces(image, faces):
     print("Found {0} faces".format(len(faces)))
     color = (0, 255, 0)  # BGR: Green
     grosor = 2

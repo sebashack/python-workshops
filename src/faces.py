@@ -12,7 +12,7 @@ def detect_faces(image):
 
     face_images = []
     for (x, y, w, h) in faces:
-        ROI = image[y: y + h, x: x + w]
+        ROI = image[y : y + h, x : x + w]
         face_images.append(ROI)
 
     return (faces, face_images)

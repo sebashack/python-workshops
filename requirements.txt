@@ -1,8 +1,6 @@
-beautifulsoup4==4.9.2
-faker==5.0.1
 matplotlib==3.3.4
-networkx==2.5
 numpy==1.20.1
 opencv-contrib-python==4.5.1.48
 opencv-python==4.5.1.48
+scikit-image==0.18.1
 unittest2==1.1.0

@@ -21,7 +21,7 @@ def read_and_reduce_samples(labels, dirpaths, width, height):
 
     for (label, dirpath) in zip(labels, dirpaths):
         images = read_images(dirpath)
-        reduced_images = list(map(lambda img: reduce_img(img, width, height), images))
+        reduced_images = list(map(lambda img: reduce_image(img, width, height), images))
         labeled_images[label] = reduced_images
 
     return labeled_images
@@ -43,18 +43,20 @@ def show_images(img_dict, delay):
             cv2.waitKey(delay)
 
 
-# Helpers
-
-
 def read_image(path):
     return cv2.imread(path)
 
 
-def reduce_img(image, width, height):
+def reduce_image(image, width, height):
     output = cv2.resize(image, (width, height), interpolation=cv2.INTER_NEAREST)
     gray_output = cv2.cvtColor(output, cv2.COLOR_BGR2GRAY)
 
     return gray_output
+
+
+def show_image(image, delay):
+    cv2.imshow("img", image)
+    cv2.waitKey(delay)
 
 
 def remove_redundancy(images, tolerance):

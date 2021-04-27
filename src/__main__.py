@@ -1,36 +1,30 @@
 import sys
 
-from image_sampler import (
-    read_and_reduce_samples,
-    remove_redundancy_from_samples,
+from face_utils import (
+    reduce_samples,
     show_images,
+    reduce_image_resolution,
+    reduce_image_to_roi,
+    remove_redundancy_from_samples,
+    write_sample_as_json,
+    read_sample_from_json
 )
+from image_viewer import launch_viewer
 
 
 def main(argv):
-    ariana = "/home/sebastian/university/algorithms_and_data_structures/project_template/face-examples/ariana-grande"
-    justin = "/home/sebastian/university/algorithms_and_data_structures/project_template/face-examples/justin-bieber"
-    rihana = "/home/sebastian/university/algorithms_and_data_structures/project_template/face-examples/rihana"
-    tyler = "/home/sebastian/university/algorithms_and_data_structures/project_template/face-examples/tyler"
-
-    samples = read_and_reduce_samples(
-        ["ariana", "justin", "rihana", "tyler"],
-        [ariana, justin, rihana, tyler],
-        150,
-        150,
+    samples = launch_viewer()
+    roi_samples = reduce_samples(samples, reduce_image_to_roi)
+    reduced_samples = reduce_samples(
+        roi_samples, lambda img: reduce_image_resolution(img, 120, 120)
     )
+    samples_no_redundancy = remove_redundancy_from_samples(reduced_samples, 0.65)
 
-    for (label, images) in samples.items():
-        print(f"{label}: {len(images)}")
+    samples_path = "/home/sebastian/university/algorithms_and_data_structures/project_template/samples.json"
+    write_sample_as_json(samples_no_redundancy, samples_path)
 
-    samples_without_redundancy = remove_redundancy_from_samples(samples, 0.65)
-
-    print("\nAfter removing redundancy\n")
-
-    for (label, images) in samples_without_redundancy.items():
-        print(f"{label}: {len(images)}")
-
-    show_images(samples_without_redundancy, 500)
+    read_sample = read_sample_from_json(samples_path)
+    show_images(read_sample, 500)
 
 
 if __name__ == "__main__":

@@ -4,49 +4,52 @@ import base64
 import cv2
 import numpy as np
 import json
+from os import walk, path
 
 
-def reduce_samples(labeled_images, redux):
-    reduced_images = defaultdict(list)
+# def reduce_samples(labeled_images, redux):
+#     reduced_images = defaultdict(list)
+#
+#     for (label, images) in labeled_images.items():
+#         reduced_images[label] = list(map(redux, images))
+#
+#     return reduced_images
+#
+#
+# def remove_redundancy_from_samples(labeled_images, tolerance):
+#     optimized_samples = defaultdict(list)
+#
+#     for (label, images) in labeled_images.items():
+#         optimized_samples[label] = remove_redundancy(images, tolerance)
+#
+#     return optimized_samples
 
-    for (label, images) in labeled_images.items():
-        reduced_images[label] = list(map(redux, images))
+def generate_rois(images, w, h):
+    roiss = list(map(lambda img: detect_faces(img)[1], images))
+    rois = [item for roi in roiss for item in roi]
 
-    return reduced_images
+    return list(map(lambda img: reduce_image_resolution(img, w, h), rois))
+
+
+def read_images(dirpath):
+    images = []
+
+    for (_, _, filenames) in walk(dirpath):
+        for name in filenames:
+            img_path = read_image(path.join(dirpath, name))
+            images.append(img_path)
+
+    return images
+
+
+def read_image(path):
+    return cv2.imread(path)
 
 
 def reduce_image_resolution(image, width, height):
     output = cv2.resize(image, (width, height), interpolation=cv2.INTER_NEAREST)
 
     return output
-
-
-def reduce_image_to_roi(image):
-    rectangles, roi_images = detect_faces(image)
-
-    if len(rectangles) < 1:
-        return cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-
-    current_area = 0
-    j = 0
-
-    for (i, (_, _, w, h)) in enumerate(rectangles):
-        area = w * h
-
-        if area > current_area:
-            current_area = area
-            j = i
-
-    return roi_images[j]
-
-
-def remove_redundancy_from_samples(labeled_images, tolerance):
-    optimized_samples = defaultdict(list)
-
-    for (label, images) in labeled_images.items():
-        optimized_samples[label] = remove_redundancy(images, tolerance)
-
-    return optimized_samples
 
 
 def detect_faces(image):
@@ -67,15 +70,17 @@ def detect_faces(image):
     return (rectangles, roi_images)
 
 
-def show_images(img_dict, delay):
+def show_images(images, delay):
+    for image in images:
+        cv2.imshow("img", image)
+        cv2.waitKey(delay)
+
+
+def show_images_in_dict(img_dict, delay):
     for images in img_dict.values():
         for image in images:
             cv2.imshow("img", image)
             cv2.waitKey(delay)
-
-
-def read_image(path):
-    return cv2.imread(path)
 
 
 def write_sample_as_json(labeled_images, filepath):

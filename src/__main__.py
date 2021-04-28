@@ -6,6 +6,7 @@ from face_utils import (
     reduce_image_resolution,
     # reduce_image_to_roi,
     # remove_redundancy_from_samples,
+    write_images,
     write_sample_as_json,
     read_sample_from_json,
     read_images,
@@ -19,8 +20,8 @@ def main(argv):
     images = read_images(dirpath)
 
     rois = generate_rois(images, 200, 200)
-
-    show_images(rois, 500)
+    labeled_path = "/home/sebastian/university/algorithms_and_data_structures/project_template/unlabeled-images"
+    write_images(rois, labeled_path)
 
     # samples = launch_viewer()
     # roi_samples = reduce_samples(samples, reduce_image_to_roi)

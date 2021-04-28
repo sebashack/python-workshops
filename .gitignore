@@ -2,3 +2,4 @@
 src/__pycache__
 test/__pycache__
 test_data/entries.csv
+unlabeled-images

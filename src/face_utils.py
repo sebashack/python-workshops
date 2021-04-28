@@ -4,7 +4,7 @@ import base64
 import cv2
 import numpy as np
 import json
-from os import walk, path
+from os import walk, path, mkdir
 
 
 # def reduce_samples(labeled_images, redux):
@@ -24,11 +24,21 @@ from os import walk, path
 #
 #     return optimized_samples
 
+
 def generate_rois(images, w, h):
     roiss = list(map(lambda img: detect_faces(img)[1], images))
     rois = [item for roi in roiss for item in roi]
 
     return list(map(lambda img: reduce_image_resolution(img, w, h), rois))
+
+
+def write_images(images, dirpath):
+    if not path.exists(dirpath):
+        mkdir(dirpath)
+
+    for (i, image) in enumerate(images):
+        name = "face" + str(i) + ".jpg"
+        cv2.imwrite(path.join(dirpath, name), image)
 
 
 def read_images(dirpath):
@@ -64,7 +74,7 @@ def detect_faces(image):
     roi_images = []
 
     for (x, y, w, h) in rectangles:
-        ROI = grey_image[y: y + h, x: x + w]
+        ROI = grey_image[y : y + h, x : x + w]
         roi_images.append(ROI)
 
     return (rectangles, roi_images)
@@ -85,7 +95,7 @@ def show_images_in_dict(img_dict, delay):
 
 def write_sample_as_json(labeled_images, filepath):
     obj = sample_to_json(labeled_images)
-    with open(filepath, 'w') as f:
+    with open(filepath, "w") as f:
         json.dump(obj, f)
 
 
@@ -99,7 +109,7 @@ def sample_to_json(labeled_images):
 
 def read_sample_from_json(filepath):
     labeled_images = defaultdict(list)
-    with open(filepath, 'r') as f:
+    with open(filepath, "r") as f:
         data = json.load(f)
 
         for (label, encoded_imgs) in data.items():
@@ -117,9 +127,9 @@ def base64_str_to_np_image(s):
 
 
 def np_image_to_base64(image):
-    retval, buff = cv2.imencode('.png', image)
+    retval, buff = cv2.imencode(".png", image)
     img_as_text = base64.b64encode(buff)
-    return img_as_text.decode('utf-8')
+    return img_as_text.decode("utf-8")
 
 
 def remove_redundancy(images, tolerance):

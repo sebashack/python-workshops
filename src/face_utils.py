@@ -53,19 +53,24 @@ def reduce_image_resolution(image, width, height):
     return output
 
 
+def to_gray_image(image):
+    gray_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    return gray_image
+
+
 def detect_faces(image):
     face_cascade = cv2.data.haarcascades + "haarcascade_frontalface_default.xml"
     face_classifier = cv2.CascadeClassifier(face_cascade)
-    grey_image = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
+    gray_image = to_gray_image(image)
 
     rectangles = face_classifier.detectMultiScale(
-        grey_image, scaleFactor=1.1, minNeighbors=4, minSize=(30, 30)
+        gray_image, scaleFactor=1.1, minNeighbors=4, minSize=(30, 30)
     )
 
     roi_images = []
 
     for (x, y, w, h) in rectangles:
-        ROI = grey_image[y : y + h, x : x + w]
+        ROI = gray_image[y: y + h, x: x + w]
         roi_images.append(ROI)
 
     return (rectangles, roi_images)
@@ -77,7 +82,7 @@ def show_images(images, delay):
         cv2.waitKey(delay)
 
 
-def show_images_in_dict(img_dict, delay):
+def show_images_dict(img_dict, delay):
     for images in img_dict.values():
         for image in images:
             cv2.imshow("img", image)

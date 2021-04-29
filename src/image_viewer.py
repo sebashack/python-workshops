@@ -2,10 +2,9 @@ import io
 import PySimpleGUI as sg
 from PIL import Image
 from collections import defaultdict
-import cv2
 from os import walk, path
 
-from face_utils import read_image
+from face_utils import read_image, to_gray_image
 
 
 file_types = [
@@ -75,9 +74,9 @@ def launch_viewer(dirpath, width, height):
             label = values["-LABEL-"]
             filename = img_paths[cur_img]
             np_image = read_image(filename)
-            grey_image = cv2.cvtColor(np_image, cv2.COLOR_BGR2GRAY)
+            gray_image = to_gray_image(np_image)
 
-            labeled_images[label].append(grey_image)
+            labeled_images[label].append(gray_image)
 
             print((label, filename))
 

@@ -70,7 +70,7 @@ def detect_faces(image):
     roi_images = []
 
     for (x, y, w, h) in rectangles:
-        ROI = gray_image[y: y + h, x: x + w]
+        ROI = gray_image[y : y + h, x : x + w]
         roi_images.append(ROI)
 
     return (rectangles, roi_images)

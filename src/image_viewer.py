@@ -1,8 +1,9 @@
 import io
-import os
 import PySimpleGUI as sg
 from PIL import Image
 from collections import defaultdict
+import cv2
+from os import walk, path
 
 from face_utils import read_image
 
@@ -14,38 +15,71 @@ file_types = [
 ]
 
 
-def launch_viewer():
+def launch_viewer(dirpath, width, height):
     layout = [
         [sg.Image(key="-IMAGE-")],
+        [sg.Text("image-label")],
+        [sg.InputText(size=(25, 1), key="-LABEL-")],
         [
-            sg.Text("Image File"),
-            sg.Input(size=(25, 1), key="-FILE-"),
-            sg.FileBrowse(file_types=file_types),
-            sg.Button("Load Image"),
+            sg.Button("set-label", disabled=True),
+            sg.Button("reset"),
+            sg.Button("next", disabled=True),
         ],
-        [sg.Text("Image Label"), sg.InputText(size=(23, 1), key="-LABEL-")],
     ]
 
-    window = sg.Window("Image Viewer", layout)
+    window = sg.Window("image-viewer", layout)
+
     labeled_images = defaultdict(list)
+    cur_img = 0
+    img_paths = []
+
+    for (_, _, filenames) in walk(dirpath):
+        for name in filenames:
+            img_paths.append(path.join(dirpath, name))
 
     while True:
         event, values = window.read()
         if event == "Exit" or event == sg.WIN_CLOSED:
             break
-        if event == "Load Image":
-            filename = values["-FILE-"]
-            label = values["-LABEL-"]
-            if os.path.exists(filename) and len(label) > 0:
-                np_image = read_image(filename)
-                labeled_images[label].append(np_image)
-                print(label)
 
-                image = Image.open(filename)
-                image.thumbnail((400, 400))
-                bio = io.BytesIO()
-                image.save(bio, format="PNG")
-                window["-IMAGE-"].update(data=bio.getvalue())
+        if cur_img >= len(img_paths):
+            window.FindElement('next').Update(disabled=True)
+            window.FindElement('reset').Update(disabled=False)
+            cur_img = 0
+
+        if (event == "reset" and cur_img == 0):
+            window.FindElement('set-label').Update(disabled=False)
+            window.FindElement('next').Update(disabled=False)
+            window.FindElement('reset').Update(disabled=True)
+
+            filename = img_paths[cur_img]
+
+            image = Image.open(filename)
+            image.thumbnail((width, height))
+            bio = io.BytesIO()
+            image.save(bio, format="PNG")
+            window["-IMAGE-"].update(data=bio.getvalue())
+
+        if event == "next":
+            cur_img = cur_img + 1
+
+            filename = img_paths[cur_img]
+
+            image = Image.open(filename)
+            image.thumbnail((width, height))
+            bio = io.BytesIO()
+            image.save(bio, format="PNG")
+            window["-IMAGE-"].update(data=bio.getvalue())
+
+        if event == "set-label":
+            label = values["-LABEL-"]
+            filename = img_paths[cur_img]
+            np_image = read_image(filename)
+            grey_image = cv2.cvtColor(np_image, cv2.COLOR_BGR2GRAY)
+
+            labeled_images[label].append(grey_image)
+
+            print((label, filename))
 
     window.close()
     return labeled_images

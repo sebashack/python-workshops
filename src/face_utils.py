@@ -7,22 +7,13 @@ import json
 from os import walk, path, mkdir
 
 
-# def reduce_samples(labeled_images, redux):
-#     reduced_images = defaultdict(list)
-#
-#     for (label, images) in labeled_images.items():
-#         reduced_images[label] = list(map(redux, images))
-#
-#     return reduced_images
-#
-#
-# def remove_redundancy_from_samples(labeled_images, tolerance):
-#     optimized_samples = defaultdict(list)
-#
-#     for (label, images) in labeled_images.items():
-#         optimized_samples[label] = remove_redundancy(images, tolerance)
-#
-#     return optimized_samples
+def remove_redundancy_from_samples(labeled_images, tolerance):
+    optimized_samples = defaultdict(list)
+
+    for (label, images) in labeled_images.items():
+        optimized_samples[label] = remove_redundancy(images, tolerance)
+
+    return optimized_samples
 
 
 def generate_rois(images, w, h):

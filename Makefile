@@ -15,10 +15,6 @@ set-py-venv-with-deps: set-py-venv
 run:
 	${VENV_DIR}/bin/python src
 
-.PHONY: test
-test:
-	${VENV_DIR}/bin/python -m unittest discover
-
 .PHONY: check-style
 check-style:
 	python3 -m black --check ${CURDIR}/src

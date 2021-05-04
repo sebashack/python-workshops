@@ -1,10 +1,10 @@
 from collections import defaultdict
+from os import walk, path, mkdir
 from skimage import metrics, img_as_float
 import base64
 import cv2
-import numpy as np
 import json
-from os import walk, path, mkdir
+import numpy as np
 
 
 def remove_redundancy_from_samples(labeled_images, tolerance):

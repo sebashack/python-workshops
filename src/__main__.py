@@ -22,7 +22,7 @@ def main(argv):
     write_images(rois, unlabeled_dirpath)
 
     samples = launch_viewer(unlabeled_dirpath, 200, 200)
-    samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65)
+    samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
 
     json_path = "/home/sebastian/university/algorithms_and_data_structures/project_template/samples.json"
     write_sample_as_json(samples_no_redundancy, json_path)

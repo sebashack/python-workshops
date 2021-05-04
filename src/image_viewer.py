@@ -18,21 +18,22 @@ def launch_viewer(dirpath, width, height):
     layout = [
         [sg.Image(key="-IMAGE-")],
         [sg.Text("image-label")],
-        [sg.InputText(size=(25, 1), key="-LABEL-")],
+        [sg.InputText(size=(25, 1), disabled=True, key="-LABEL-")],
         [
+            sg.Button("start"),
             sg.Button("set-label", disabled=True),
-            sg.Button("reset"),
             sg.Button("next", disabled=True),
             sg.Button("finish"),
         ],
     ]
 
-    window = sg.Window("image-viewer", layout)
+    window = sg.Window("image-viewer", layout, return_keyboard_events=True)
 
     stored_images = defaultdict(lambda: defaultdict(str))
     cur_img = 0
     img_paths = {}
     prev_label = ""
+    is_start = True
 
     for (_, _, filenames) in walk(dirpath):
         for name in filenames:
@@ -46,15 +47,16 @@ def launch_viewer(dirpath, width, height):
         if event == "finish" or event == "Exit" or event == sg.WIN_CLOSED:
             break
 
-        if cur_img >= len(img_paths):
-            window.FindElement("next").Update(disabled=True)
-            window.FindElement("reset").Update(disabled=False)
-            cur_img = 0
-
-        if event == "reset" and cur_img == 0:
+        if len(values["-LABEL-"]) < 2:
+            window.FindElement("set-label").Update(disabled=True)
+        elif(not is_start and len(values["-LABEL-"]) > 2):
             window.FindElement("set-label").Update(disabled=False)
+
+        if event == "start" and is_start and cur_img == 0:
+            is_start = False
+            window.FindElement("-LABEL-").Update(disabled=False)
             window.FindElement("next").Update(disabled=False)
-            window.FindElement("reset").Update(disabled=True)
+            window.FindElement("start").Update(disabled=True)
 
             filename = img_paths[cur_img][0]
 
@@ -66,6 +68,10 @@ def launch_viewer(dirpath, width, height):
 
         if event == "next":
             cur_img = cur_img + 1
+
+            if cur_img == len(img_paths):
+                cur_img = 0
+
             filename = img_paths[cur_img][0]
             image = Image.open(filename)
             image.thumbnail((width, height))
@@ -75,6 +81,7 @@ def launch_viewer(dirpath, width, height):
 
             window["-IMAGE-"].update(data=bio.getvalue())
             window.FindElement("-LABEL-").Update(value="")
+            window.FindElement("set-label").Update(disabled=True)
 
         if event == "set-label":
             is_labeled = img_paths[cur_img][1]
@@ -91,6 +98,7 @@ def launch_viewer(dirpath, width, height):
             img_paths[cur_img][1] = True
 
             prev_label = label
+
             print((label, filename))
 
     window.close()
@@ -103,5 +111,6 @@ def launch_viewer(dirpath, width, height):
 
 
 def remove_file(d, label, filename):
-    files = d[label]
-    del files[filename]
+    if label in d and filename in d[label]:
+        files = d[label]
+        del files[filename]

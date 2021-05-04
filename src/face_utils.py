@@ -5,13 +5,14 @@ import base64
 import cv2
 import json
 import numpy as np
+import random
 
 
-def remove_redundancy_from_samples(labeled_images, tolerance):
+def remove_redundancy_from_samples(labeled_images, tolerance, limit):
     optimized_samples = defaultdict(list)
 
     for (label, images) in labeled_images.items():
-        optimized_samples[label] = remove_redundancy(images, tolerance)
+        optimized_samples[label] = remove_redundancy(images, tolerance, limit)
 
     return optimized_samples
 
@@ -128,11 +129,11 @@ def np_image_to_base64(image):
     return img_as_text.decode("utf-8")
 
 
-def remove_redundancy(images, tolerance):
-    return remove_redundancy_(images, 0, tolerance)
+def remove_redundancy(images, tolerance, limit):
+    return remove_redundancy_(images, 0, tolerance, limit)
 
 
-def remove_redundancy_(images, i, tolerance):
+def remove_redundancy_(images, i, tolerance, limit):
     if len(images) < 2:
         return images
 
@@ -141,12 +142,15 @@ def remove_redundancy_(images, i, tolerance):
 
     head = images[0]
     tail = images[1:]
+    # Compare against a random sample for performance purposes.
+    sample = tail
+    random.shuffle(sample)
 
-    if is_similar_to_any(head, tail, tolerance):
-        return remove_redundancy_(tail, i + 1, tolerance)
+    if is_similar_to_any(head, sample[0:limit], tolerance):
+        return remove_redundancy_(tail, i + 1, tolerance, limit)
     else:
         tail.append(head)
-        return remove_redundancy_(tail, i + 1, tolerance)
+        return remove_redundancy_(tail, i + 1, tolerance, limit)
 
 
 def is_similar_to_any(image, images, tolerance):

@@ -1,1 +1,0 @@
-Implement simple program that identifies faces with openCV.

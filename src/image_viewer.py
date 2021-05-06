@@ -49,7 +49,7 @@ def launch_viewer(dirpath, width, height):
 
         if len(values["-LABEL-"]) < 2:
             window.FindElement("set-label").Update(disabled=True)
-        elif(not is_start and len(values["-LABEL-"]) > 2):
+        elif not is_start and len(values["-LABEL-"]) > 2:
             window.FindElement("set-label").Update(disabled=False)
 
         if event == "start" and is_start and cur_img == 0:

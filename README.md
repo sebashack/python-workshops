@@ -2,6 +2,11 @@
 
 This code has only been run in Ubuntu 20.04.
 
+## Install system dependencies
+
+```
+./first-time-install.sh
+```
 
 ## Set work environment
 

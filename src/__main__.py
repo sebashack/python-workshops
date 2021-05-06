@@ -21,7 +21,7 @@ def main(argv):
         "-i",
         "--input-dir",
         required=True,
-        metavar="FILE",
+        metavar="DIR",
         type=Path,
         help="raw images input dir",
     )
@@ -29,7 +29,7 @@ def main(argv):
         "-o",
         "--out-dir",
         required=True,
-        metavar="FILE",
+        metavar="DIR",
         type=Path,
         help="processed rois output dir",
     )
@@ -45,7 +45,7 @@ def main(argv):
         "-wt",
         "--width",
         required=True,
-        metavar="FILE",
+        metavar="INT",
         type=int,
         help="proccessed image width",
     )
@@ -53,7 +53,7 @@ def main(argv):
         "-ht",
         "--height",
         required=True,
-        metavar="FILE",
+        metavar="INT",
         type=int,
         help="proccessed image height",
     )

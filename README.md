@@ -56,3 +56,5 @@ python src -i ./face-examples -o ./unlabeled-images -j ./sample.json -wt 300 -ht
 This command will read images from dir `./face-examples` and write rois with `300 x 300` resolution into `./unlabeled-images`.
 Subsequently, ImageViewer will pop up and user will proceed to label each example. When labeling is finished, the dictionary of
 images is properly encoded and written into `./sample.json` file.
+
+In the root of this project there is a sample directory with raw images at `./face-examples`.

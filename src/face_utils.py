@@ -110,7 +110,8 @@ def read_sample_from_json(filepath):
         data = json.load(f)
 
         for (label, encoded_imgs) in data.items():
-            labeled_images[label] = list(map(base64_str_to_np_image, encoded_imgs))
+            images = list(map(base64_str_to_np_image, encoded_imgs))
+            labeled_images[label] = list(map(to_gray_image, images))
 
         f.close()
 

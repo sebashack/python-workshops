@@ -1,7 +1,9 @@
 Pillow==8.2.0
 PySimpleGUI==4.40.0
 matplotlib==3.3.4
-numpy==1.20.1
+numpy==1.19.2
 opencv-contrib-python==4.5.1.48
 opencv-python==4.5.1.48
 scikit-image==0.18.1
+keras==2.4.3
+tensorflow==2.5.0

@@ -2,9 +2,10 @@ from pathlib import Path
 from os import walk, path, mkdir, rmdir, remove
 import argparse
 import sys
+import tensorflow as tf
+from tensorflow import keras
 
 from face_utils import (
-    show_images_dict,
     remove_redundancy_from_samples,
     write_images,
     write_sample_as_json,
@@ -13,6 +14,7 @@ from face_utils import (
     generate_rois,
 )
 from image_viewer import launch_viewer
+from neural_network_utils import show_images_5x5, label_dict_to_matrix
 
 
 def main(argv):
@@ -86,7 +88,9 @@ def main(argv):
     write_sample_as_json(samples_no_redundancy, json_path)
 
     read_sample = read_sample_from_json(json_path)
-    show_images_dict(read_sample, 500)
+
+    (trainingImgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
+    show_images_5x5(trainingImgs, text_labels, numeric_labels, 4, 0)
 
 
 def rmdir_r(rootpath):

@@ -1,9 +1,7 @@
-from pathlib import Path
 from os import walk, path, mkdir, rmdir, remove
+from pathlib import Path
 import argparse
 import sys
-import tensorflow as tf
-from tensorflow import keras
 
 from face_utils import (
     remove_redundancy_from_samples,
@@ -14,7 +12,7 @@ from face_utils import (
     generate_rois,
 )
 from image_viewer import launch_viewer
-from neural_network_utils import show_images_5x5, label_dict_to_matrix
+from neural_network_utils import show_images_5x5, label_dict_to_matrix, train_model
 
 
 def main(argv):
@@ -68,7 +66,9 @@ def main(argv):
         raise Exception("non-existent directory")
 
     images = read_images(raw_dirpath)
-    rois = generate_rois(images, args.width, args.height)
+    width = args.width
+    height = args.height
+    rois = generate_rois(images, width, height)
 
     unlabeled_dirpath = args.out_dir
 
@@ -89,8 +89,15 @@ def main(argv):
 
     read_sample = read_sample_from_json(json_path)
 
-    (trainingImgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
-    show_images_5x5(trainingImgs, text_labels, numeric_labels, 4, 0)
+    (training_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
+
+    print(training_imgs.shape)
+    print(numeric_labels.shape)
+
+    trained_model = train_model(training_imgs, numeric_labels, width, height, epochs=4)
+
+    print(trained_model)
+    show_images_5x5(training_imgs, text_labels, numeric_labels, 4, 0)
 
 
 def rmdir_r(rootpath):

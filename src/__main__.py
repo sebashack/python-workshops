@@ -97,7 +97,7 @@ def main(argv):
     trained_model = train_model(training_imgs, numeric_labels, width, height, epochs=4)
 
     print(trained_model)
-    show_images_5x5(training_imgs, text_labels, numeric_labels, 4, 0)
+    show_images_5x5(training_imgs, text_labels, numeric_labels, 10, 2)
 
 
 def rmdir_r(rootpath):

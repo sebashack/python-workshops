@@ -1,10 +1,10 @@
 from tensorflow import keras
 import matplotlib.pyplot as plt
 import numpy as np
-import tensorflow as tf
+from random import randrange
 
 
-def show_images_5x5(images, text_labels, numeric_labels, n, offset):
+def show_images_5x5(images, text_labels, num_labels, n, offset):
     plt.figure(figsize=(10, 10))
     for i in range(n):
         plt.subplot(5, 5, i + 1)
@@ -12,24 +12,37 @@ def show_images_5x5(images, text_labels, numeric_labels, n, offset):
         plt.yticks([])
         plt.grid(False)
         plt.imshow(images[i + offset], cmap=plt.cm.binary)
-        plt.xlabel(text_labels[numeric_labels[i + offset]])
+        plt.xlabel(text_labels[num_labels[i + offset]])
     plt.show()
 
 
 def label_dict_to_matrix(data_set):
     mx = []
-    labels = []
-    numeric_labels = []
+    labels = {}
+    num_labels = []
 
     i = 0
     for label, images in data_set.items():
         for image in images:
             mx.append(image)
-            numeric_labels.append(i)
+            num_labels.append(i)
+        labels[i] = label
         i += 1
-        labels.append(label)
 
-    return (np.array(mx), np.array(numeric_labels), labels)
+    shuffle(mx, num_labels)
+
+    return (np.array(mx), np.array(num_labels), labels)
+
+
+def shuffle(mx, num_labels):
+    size = len(mx)
+
+    for _ in range(size):
+        i = randrange(size)
+        j = randrange(size)
+
+        mx[i], mx[j] = mx[j], mx[i]
+        num_labels[i], num_labels[j] = num_labels[j], num_labels[i]
 
 
 def train_model(training_images, training_labels, width, height, epochs):

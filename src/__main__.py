@@ -14,12 +14,12 @@ from face_utils import (
 )
 from image_viewer import launch_viewer
 from neural_network_utils import (
-        show_images_5x5,
-        label_dict_to_matrix,
-        train_model,
-        classify_image,
-        classify_images,
-        show_classified_images_5x5,
+    show_images_5x5,
+    label_dict_to_matrix,
+    train_model,
+    classify_image,
+    classify_images,
+    show_classified_images_5x5,
 )
 
 
@@ -89,11 +89,11 @@ def main(argv):
 
     write_images(rois, unlabeled_dirpath)
 
-    samples = launch_viewer(unlabeled_dirpath, args.width, args.height)
-    samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
+    # samples = launch_viewer(unlabeled_dirpath, args.width, args.height)
+    # samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
 
     json_path = args.out_json
-    write_sample_as_json(samples_no_redundancy, json_path)
+    # write_sample_as_json(samples_no_redundancy, json_path)
 
     read_sample = read_sample_from_json(json_path)
 
@@ -101,14 +101,16 @@ def main(argv):
 
     num_output_layers = len(text_labels)
     print(f"num output layers: {num_output_layers}")
-    trained_model = train_model(training_imgs, numeric_labels, num_output_layers, width, height, epochs=5)
+    trained_model = train_model(
+        training_imgs, numeric_labels, num_output_layers, width, height, epochs=10
+    )
 
-    predictions = classify_images(trained_model, text_labels, training_imgs)
+    predictions = classify_images(trained_model, text_labels, training_imgs[0:24])
 
     print(numeric_labels)
     print(text_labels)
     print(predictions)
-    show_classified_images_5x5(training_imgs, predictions)
+    show_classified_images_5x5(training_imgs[0:24], predictions)
 
 
 def rmdir_r(rootpath):

@@ -63,9 +63,11 @@ def shuffle(mx, num_labels):
         num_labels[i], num_labels[j] = num_labels[j], num_labels[i]
 
 
-def train_model(
-    training_images, training_labels, num_output_layers, width, height, epochs
-):
+def train_model(training_images, training_labels, num_output_layers, epochs):
+    size = training_images.shape[0]
+    width = training_images.shape[1]
+    height = training_images.shape[2]
+
     model = basic_cnn_model((width, height, 1), num_output_layers)
 
     model.compile(
@@ -74,16 +76,35 @@ def train_model(
         metrics=["accuracy"],
     )
 
-    training_images_ = (
-        training_images.reshape(len(training_images), height, width, 1) / 255.0
-    )
+    training_images_ = training_images.reshape(size, width, height, 1) / 255.0
+
     model.fit(training_images_, training_labels, epochs=epochs)
 
     return model
 
 
-def test_model(model, example_images, example_labels):
-    return model.evaluate(example_images, example_labels, verbose=2)
+def partition_sample(training_images, training_labels, percentage):
+    assert percentage >= 1 and percentage <= 100
+    size = len(training_images)
+    test_size = round(size * (percentage / 100))
+    training_size = size - test_size
+
+    training_set = (training_images[:training_size], training_labels[:training_size])
+    test_set = (training_images[training_size:], training_labels[training_size:])
+
+    return {"training": training_set, "test": test_set}
+
+
+def evaluate_model(model, example_images, example_labels):
+    size = example_images.shape[0]
+    width = example_images.shape[1]
+    height = example_images.shape[2]
+
+    example_images_ = example_images.reshape(size, width, height, 1) / 255.0
+
+    (loss, accuracy) = model.evaluate(example_images_, example_labels, verbose=2)
+
+    return (loss, accuracy)
 
 
 def save_model(filepath, model):

@@ -20,6 +20,8 @@ from neural_network_utils import (
     classify_image,
     classify_images,
     show_classified_images_5x5,
+    partition_sample,
+    evaluate_model,
 )
 
 
@@ -97,20 +99,32 @@ def main(argv):
 
     read_sample = read_sample_from_json(json_path)
 
-    (training_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
+    (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
 
     num_output_layers = len(text_labels)
     print(f"num output layers: {num_output_layers}")
+
+    data_set = partition_sample(sample_imgs, numeric_labels, 10)
+
+    print(
+        f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
+    )
+    print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
+
     trained_model = train_model(
-        training_imgs, numeric_labels, num_output_layers, width, height, epochs=10
+        data_set["training"][0], data_set["training"][1], num_output_layers, epochs=10
     )
 
-    predictions = classify_images(trained_model, text_labels, training_imgs[0:24])
+    evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])
 
-    print(numeric_labels)
+    print(f"(loss, accuracy): {evaluation}")
+
+    predictions = classify_images(trained_model, text_labels, data_set["test"][0])
+
+    print(data_set["test"][1])
     print(text_labels)
     print(predictions)
-    show_classified_images_5x5(training_imgs[0:24], predictions)
+    show_classified_images_5x5(data_set["test"][0], predictions)
 
 
 def rmdir_r(rootpath):

@@ -84,7 +84,7 @@ def train_model(training_images, training_labels, num_output_layers, width, heig
                   loss=tf.keras.losses.SparseCategoricalCrossentropy(from_logits=True),
                   metrics=['accuracy'])
 
-    training_images_ = training_images.reshape(len(training_images), height, width, 1)
+    training_images_ = training_images.reshape(len(training_images), height, width, 1) / 255.0
     model.fit(training_images_, training_labels, epochs=epochs)
 
     return model

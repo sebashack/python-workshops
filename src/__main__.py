@@ -91,40 +91,46 @@ def main(argv):
 
     write_images(rois, unlabeled_dirpath)
 
-    # samples = launch_viewer(unlabeled_dirpath, args.width, args.height)
-    # samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
+    all_text_labels = ["donald-trump",
+                       "rihanna",
+                       "emma-chamberlain",
+                       "barack-obama",
+                       ]
+
+    samples = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
+    samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
 
     json_path = args.out_json
-    # write_sample_as_json(samples_no_redundancy, json_path)
+    write_sample_as_json(samples_no_redundancy, json_path)
 
-    read_sample = read_sample_from_json(json_path)
+    # read_sample = read_sample_from_json(json_path)
 
-    (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
+    # (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
 
-    num_output_layers = len(text_labels)
-    print(f"num output layers: {num_output_layers}")
+    # num_output_layers = len(text_labels)
+    # print(f"num output layers: {num_output_layers}")
 
-    data_set = partition_sample(sample_imgs, numeric_labels, 10)
+    # data_set = partition_sample(sample_imgs, numeric_labels, 10)
 
-    print(
-        f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
-    )
-    print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
+    # print(
+    #     f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
+    # )
+    # print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
 
-    trained_model = train_model(
-        data_set["training"][0], data_set["training"][1], num_output_layers, epochs=10
-    )
+    # trained_model = train_model(
+    #     data_set["training"][0], data_set["training"][1], num_output_layers, epochs=10
+    # )
 
-    evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])
+    # evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])
 
-    print(f"(loss, accuracy): {evaluation}")
+    # print(f"(loss, accuracy): {evaluation}")
 
-    predictions = classify_images(trained_model, text_labels, data_set["test"][0])
+    # predictions = classify_images(trained_model, text_labels, data_set["test"][0])
 
-    print(data_set["test"][1])
-    print(text_labels)
-    print(predictions)
-    show_classified_images_5x5(data_set["test"][0], predictions)
+    # print(data_set["test"][1])
+    # print(text_labels)
+    # print(predictions)
+    # show_classified_images_5x5(data_set["test"][0], predictions)
 
 
 def rmdir_r(rootpath):

@@ -14,11 +14,10 @@ file_types = [
 ]
 
 
-def launch_viewer(dirpath, width, height):
+def launch_viewer(dirpath, width, height, labels):
     layout = [
         [sg.Image(key="-IMAGE-")],
-        [sg.Text("image-label")],
-        [sg.InputText(size=(25, 1), disabled=True, key="-LABEL-")],
+        [sg.InputOptionMenu(labels, key="-LABEL-", default_value=labels[0])],
         [
             sg.Button("start"),
             sg.Button("set-label", disabled=True),
@@ -43,18 +42,17 @@ def launch_viewer(dirpath, width, height):
     cur_img = 0
 
     while True:
+
         event, values = window.read()
         if event == "finish" or event == "Exit" or event == sg.WIN_CLOSED:
             break
 
-        if len(values["-LABEL-"]) < 2:
+        if len(values["-LABEL-"]) < 1:
             window.FindElement("set-label").Update(disabled=True)
-        elif not is_start and len(values["-LABEL-"]) > 2:
-            window.FindElement("set-label").Update(disabled=False)
 
         if event == "start" and is_start and cur_img == 0:
             is_start = False
-            window.FindElement("-LABEL-").Update(disabled=False)
+            window.FindElement("set-label").Update(disabled=False)
             window.FindElement("next").Update(disabled=False)
             window.FindElement("start").Update(disabled=True)
 
@@ -80,8 +78,6 @@ def launch_viewer(dirpath, width, height):
             image.save(bio, format="PNG")
 
             window["-IMAGE-"].update(data=bio.getvalue())
-            window.FindElement("-LABEL-").Update(value="")
-            window.FindElement("set-label").Update(disabled=True)
 
         if event == "set-label":
             is_labeled = img_paths[cur_img][1]

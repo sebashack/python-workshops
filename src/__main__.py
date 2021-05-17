@@ -9,10 +9,18 @@ from face_utils import (
     write_sample_as_json,
     read_sample_from_json,
     read_images,
+    show_images,
     generate_rois,
 )
 from image_viewer import launch_viewer
-from neural_network_utils import show_images_5x5, label_dict_to_matrix, train_model
+from neural_network_utils import (
+        show_images_5x5,
+        label_dict_to_matrix,
+        train_model,
+        classify_image,
+        classify_images,
+        show_classified_images_5x5,
+)
 
 
 def main(argv):
@@ -91,13 +99,16 @@ def main(argv):
 
     (training_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
 
-    print(training_imgs.shape)
-    print(numeric_labels.shape)
+    num_output_layers = len(text_labels)
+    print(f"num output layers: {num_output_layers}")
+    trained_model = train_model(training_imgs, numeric_labels, num_output_layers, width, height, epochs=5)
 
-    trained_model = train_model(training_imgs, numeric_labels, width, height, epochs=4)
+    predictions = classify_images(trained_model, text_labels, training_imgs)
 
-    print(trained_model)
-    show_images_5x5(training_imgs, text_labels, numeric_labels, 10, 2)
+    print(numeric_labels)
+    print(text_labels)
+    print(predictions)
+    show_classified_images_5x5(training_imgs, predictions)
 
 
 def rmdir_r(rootpath):

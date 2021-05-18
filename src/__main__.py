@@ -9,7 +9,7 @@ from face_utils import (
     write_sample_as_json,
     read_sample_from_json,
     read_images,
-    show_images,
+    show_images_dict,
     generate_rois,
 )
 from image_viewer import launch_viewer
@@ -103,7 +103,9 @@ def main(argv):
     json_path = args.out_json
     write_sample_as_json(samples_no_redundancy, json_path)
 
-    # read_sample = read_sample_from_json(json_path)
+    read_sample = read_sample_from_json(json_path)
+
+    show_images_dict(read_sample, 500)
 
     # (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
 

@@ -68,6 +68,7 @@ def launch_viewer(dirpath, width, height, labels):
             cur_img = cur_img + 1
 
             if cur_img == len(img_paths):
+                print("WARNING: !!!!!!!back to first image!!!!!!!")
                 cur_img = 0
 
             filename = img_paths[cur_img][0]

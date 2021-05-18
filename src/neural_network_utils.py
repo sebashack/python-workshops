@@ -70,7 +70,7 @@ def train_model(training_images, training_labels, num_output_layers, batch_size,
     width = training_images.shape[1]
     height = training_images.shape[2]
 
-    model = resnet50_cnn_model((width, height, 1), num_output_layers)
+    model = basic_cnn_model((width, height, 1), num_output_layers)
 
     model.compile(
         optimizer="adam",
@@ -101,14 +101,15 @@ def partition_sample(training_images, training_labels, percentage):
     return {"training": training_set, "test": test_set}
 
 
-def evaluate_model(model, example_images, example_labels):
+def evaluate_model(model, example_images, example_labels, batch_size):
     size = example_images.shape[0]
     width = example_images.shape[1]
     height = example_images.shape[2]
 
     example_images_ = example_images.reshape(size, width, height, 1) / 255.0
+    gen = make_data_generator(example_images_, example_labels, batch_size)
 
-    (loss, accuracy) = model.evaluate(example_images_, example_labels, verbose=2)
+    (loss, accuracy) = model.evaluate(gen['iterator'], verbose=2)
 
     return (loss, accuracy)
 

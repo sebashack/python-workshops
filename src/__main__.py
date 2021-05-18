@@ -98,10 +98,9 @@ def main(argv):
     #                    ]
 
     # samples = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
-    # samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
 
     json_path = args.out_json
-    # write_sample_as_json(samples_no_redundancy, json_path)
+    # write_sample_as_json(samples, json_path)
 
     read_sample = read_sample_from_json(json_path)
 
@@ -121,10 +120,10 @@ def main(argv):
     print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
 
     trained_model = train_model(
-        data_set["training"][0], data_set["training"][1], num_output_layers, batch_size=25, epochs=30
+        data_set["training"][0], data_set["training"][1], num_output_layers, batch_size=32, epochs=40
     )
 
-    evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])
+    evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1], 3)
 
     print(f"(loss, accuracy): {evaluation}")
 

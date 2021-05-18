@@ -28,7 +28,7 @@ def show_classified_images_5x5(images, labels_and_pobs):
         plt.grid(False)
         plt.imshow(image)
         (label, prob) = labels_and_pobs[i]
-        p = "{:.3f}".format(prob)
+        p = "{:.2f}".format(prob)
         plt.xlabel(f"{label}: {p}")
 
     plt.show()

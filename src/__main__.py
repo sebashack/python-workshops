@@ -69,70 +69,73 @@ def main(argv):
     )
     args = parser.parse_args()
 
-    raw_dirpath = args.input_dir
+    # raw_dirpath = args.input_dir
 
-    if not path.isdir(raw_dirpath):
-        print(f"non-existent raw input dir: {raw_dirpath}", file=sys.stderr)
-        raise Exception("non-existent directory")
+    # if not path.isdir(raw_dirpath):
+    #     print(f"non-existent raw input dir: {raw_dirpath}", file=sys.stderr)
+    #     raise Exception("non-existent directory")
 
-    images = read_images(raw_dirpath)
-    width = args.width
-    height = args.height
-    rois = generate_rois(images, width, height)
+    # images = read_images(raw_dirpath)
+    # width = args.width
+    # height = args.height
+    # rois = generate_rois(images, width, height)
 
-    unlabeled_dirpath = args.out_dir
+    # unlabeled_dirpath = args.out_dir
 
-    try:
-        rmdir_r(unlabeled_dirpath)
-        mkdir(unlabeled_dirpath)
-    except OSError:
-        print(f"creating processed rois output dir at: {unlabeled_dirpath}")
-        mkdir(unlabeled_dirpath)
+    # try:
+    #     rmdir_r(unlabeled_dirpath)
+    #     mkdir(unlabeled_dirpath)
+    # except OSError:
+    #     print(f"creating processed rois output dir at: {unlabeled_dirpath}")
+    #     mkdir(unlabeled_dirpath)
 
-    write_images(rois, unlabeled_dirpath)
+    # write_images(rois, unlabeled_dirpath)
 
-    all_text_labels = ["donald-trump",
-                       "rihanna",
-                       "emma-chamberlain",
-                       "barack-obama",
-                       ]
+    # all_text_labels = ["donald-trump",
+    #                    "rihanna",
+    #                    "emma-chamberlain",
+    #                    "barack-obama",
+    #                    ]
 
-    samples = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
-    samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
+    # samples = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
+    # samples_no_redundancy = remove_redundancy_from_samples(samples, 0.65, 30)
 
     json_path = args.out_json
-    write_sample_as_json(samples_no_redundancy, json_path)
+    # write_sample_as_json(samples_no_redundancy, json_path)
 
     read_sample = read_sample_from_json(json_path)
 
-    show_images_dict(read_sample, 500)
+    # show_images_dict(read_sample, 500)
 
-    # (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
+    (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
 
-    # num_output_layers = len(text_labels)
-    # print(f"num output layers: {num_output_layers}")
+    num_output_layers = len(text_labels)
+    print(f"num output layers: {num_output_layers}")
 
-    # data_set = partition_sample(sample_imgs, numeric_labels, 10)
+    data_set = partition_sample(sample_imgs, numeric_labels, 10)
 
-    # print(
-    #     f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
-    # )
-    # print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
+    print(
+        f"len total: {(len(sample_imgs), len(numeric_labels))}"
+    )
+    print(
+        f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
+    )
+    print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
 
-    # trained_model = train_model(
-    #     data_set["training"][0], data_set["training"][1], num_output_layers, epochs=10
-    # )
+    trained_model = train_model(
+        data_set["training"][0], data_set["training"][1], num_output_layers, epochs=15
+    )
 
-    # evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])
+    evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])
 
-    # print(f"(loss, accuracy): {evaluation}")
+    print(f"(loss, accuracy): {evaluation}")
 
-    # predictions = classify_images(trained_model, text_labels, data_set["test"][0])
+    predictions = classify_images(trained_model, text_labels, data_set["test"][0])
 
-    # print(data_set["test"][1])
-    # print(text_labels)
-    # print(predictions)
-    # show_classified_images_5x5(data_set["test"][0], predictions)
+    print(data_set["test"][1])
+    print(text_labels)
+    print(predictions)
+    show_classified_images_5x5(data_set["test"][0], predictions)
 
 
 def rmdir_r(rootpath):

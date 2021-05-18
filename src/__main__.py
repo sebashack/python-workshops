@@ -114,16 +114,14 @@ def main(argv):
 
     data_set = partition_sample(sample_imgs, numeric_labels, 10)
 
-    print(
-        f"len total: {(len(sample_imgs), len(numeric_labels))}"
-    )
+    print(f"len total: {(len(sample_imgs), len(numeric_labels))}")
     print(
         f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
     )
     print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
 
     trained_model = train_model(
-        data_set["training"][0], data_set["training"][1], num_output_layers, epochs=15
+        data_set["training"][0], data_set["training"][1], num_output_layers, batch_size=25, epochs=30
     )
 
     evaluation = evaluate_model(trained_model, data_set["test"][0], data_set["test"][1])

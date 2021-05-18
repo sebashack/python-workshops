@@ -1,8 +1,10 @@
 import tensorflow as tf
 from tensorflow import keras
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import layers, models
 import matplotlib.pyplot as plt
 import numpy as np
+import math
 from random import randrange
 
 
@@ -63,12 +65,12 @@ def shuffle(mx, num_labels):
         num_labels[i], num_labels[j] = num_labels[j], num_labels[i]
 
 
-def train_model(training_images, training_labels, num_output_layers, epochs):
+def train_model(training_images, training_labels, num_output_layers, batch_size, epochs):
     size = training_images.shape[0]
     width = training_images.shape[1]
     height = training_images.shape[2]
 
-    model = basic_cnn_model((width, height, 1), num_output_layers)
+    model = resnet50_cnn_model((width, height, 1), num_output_layers)
 
     model.compile(
         optimizer="adam",
@@ -78,7 +80,11 @@ def train_model(training_images, training_labels, num_output_layers, epochs):
 
     training_images_ = training_images.reshape(size, width, height, 1) / 255.0
 
-    model.fit(training_images_, training_labels, epochs=epochs)
+    gen = make_data_generator(training_images_, training_labels, batch_size)
+
+    model.fit_generator(gen['iterator'],
+                        steps_per_epoch=gen['steps_per_epoch'],
+                        epochs=epochs)
 
     return model
 
@@ -132,7 +138,7 @@ def classify_images(model, text_labels, images):
     input_ = np.array(images).reshape(size, width, height, 1)
 
     predictions = model.predict(input_)
-    # print(f"Original preds: {predictions}")
+    print(f"Original preds: {predictions}")
 
     return list(map(lambda p: get_label(text_labels, p), predictions))
 
@@ -145,7 +151,23 @@ def get_label(text_labels, prediction):
     return (predicted_label, probability)
 
 
-# TODO: Beat this simple model
+def make_data_generator(data_set, labels, batch_size):
+    size = data_set.shape[0]
+    width = data_set.shape[1]
+    height = data_set.shape[2]
+
+    data_set_ = data_set.reshape(size, width, height, 1)
+
+    datagen = ImageDataGenerator(horizontal_flip=True,
+                                 rotation_range=50,
+                                 brightness_range=[0.2, 1.0])
+
+    it = datagen.flow(data_set_, labels, batch_size=batch_size)
+    steps_per_epoch = math.ceil(len(data_set) / batch_size)
+
+    return {'iterator': it, 'steps_per_epoch': steps_per_epoch}
+
+
 def basic_cnn_model(shape, num_output_layers):
     model = models.Sequential()
 
@@ -159,17 +181,34 @@ def basic_cnn_model(shape, num_output_layers):
             input_shape=shape,
         )
     )
-    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
     # Second layer
-    model.add(layers.Conv2D(50, (5, 5), activation="relu", padding="same"))
     model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
     # Third layer
+    model.add(layers.Conv2D(50, (5, 5), activation="relu", padding="same"))
+
+    # Fourth layer
+    model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
+
+    # Fifth layer
     model.add(layers.Flatten())
     model.add(layers.Dense(500, activation="relu"))
 
     # Output layer
     model.add(layers.Dense(num_output_layers, activation="softmax"))
+
+    return model
+
+
+def resnet50_cnn_model(shape, num_output_layers):
+    model = tf.keras.applications.ResNet50(
+            include_top=True,
+            weights=None,
+            input_tensor=None,
+            input_shape=shape,
+            pooling=None,
+            classes=num_output_layers
+    )
 
     return model

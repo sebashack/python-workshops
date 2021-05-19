@@ -118,6 +118,19 @@ def read_sample_from_json(filepath):
     return labeled_images
 
 
+def merge_samples(labeled_images1, labeled_images2):
+    merged_images = labeled_images1
+
+    for (label, images) in labeled_images2.items():
+        if label in merged_images:
+            prev_images = merged_images[label]
+            merged_images[label] = prev_images + images
+        else:
+            merged_images[label] = images
+
+    return merged_images
+
+
 def base64_str_to_np_image(s):
     buff = base64.b64decode(s)
     image_as_np = np.frombuffer(buff, dtype=np.uint8)

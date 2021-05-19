@@ -76,25 +76,25 @@ def main(argv):
     )
     args = parser.parse_args()
 
-    # raw_dirpath = args.input_dir
+    raw_dirpath = args.input_dir
 
-    # if not path.isdir(raw_dirpath):
-    #     print(f"non-existent raw input dir: {raw_dirpath}", file=sys.stderr)
-    #     raise Exception("non-existent directory")
+    if not path.isdir(raw_dirpath):
+        print(f"non-existent raw input dir: {raw_dirpath}", file=sys.stderr)
+        raise Exception("non-existent directory")
 
-    # images = read_images(raw_dirpath)
-    # width = args.width
-    # height = args.height
+    images = read_images(raw_dirpath)
+    width = args.width
+    height = args.height
     # rois = generate_rois(images, width, height)
 
-    # unlabeled_dirpath = args.out_dir
+    unlabeled_dirpath = args.out_dir
 
-    # try:
-    #     rmdir_r(unlabeled_dirpath)
-    #     mkdir(unlabeled_dirpath)
-    # except OSError:
-    #     print(f"creating processed rois output dir at: {unlabeled_dirpath}")
-    #     mkdir(unlabeled_dirpath)
+    try:
+        rmdir_r(unlabeled_dirpath)
+        mkdir(unlabeled_dirpath)
+    except OSError:
+        print(f"creating processed rois output dir at: {unlabeled_dirpath}")
+        mkdir(unlabeled_dirpath)
 
     # write_images(rois, unlabeled_dirpath)
 
@@ -102,19 +102,21 @@ def main(argv):
                        "rihanna",
                        "emma-chamberlain",
                        "barack-obama",
+                       "jennifer",
+                       "justin"
                        ]
 
     # new_sample = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
 
-    # print(len(new_sample['donald-trump']))
+    # print(len(new_sample['barack-obama']))
 
     # accum_sample = read_sample_from_json("/home/sebastian/university/algorithms_and_data_structures/project_template/sample.json")
 
-    # print(len(accum_sample['donald-trump']))
+    # print(len(accum_sample['barack-obama']))
 
     # merged_sample = merge_samples(accum_sample, new_sample)
 
-    # print(len(merged_sample['donald-trump']))
+    # print(len(merged_sample['barack-obama']))
 
     json_path = args.out_json
     # write_sample_as_json(merged_sample, json_path)
@@ -128,7 +130,7 @@ def main(argv):
     num_output_layers = len(text_labels)
     print(f"num output layers: {num_output_layers}")
 
-    data_set = partition_sample(sample_imgs, numeric_labels, 10)
+    data_set = partition_sample(sample_imgs, numeric_labels, percentage=10)
 
     print(f"len total: {(len(sample_imgs), len(numeric_labels))}")
     print(
@@ -137,43 +139,40 @@ def main(argv):
     print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
 
     # trained_model = train_model(
-    #     data_set["training"][0], data_set["training"][1], num_output_layers, batch_size=32, epochs=3
+    #     data_set["training"][0], data_set["training"][1], num_output_layers, batch_size=32, epochs=30
     # )
 
     models_dir = "/home/sebastian/university/algorithms_and_data_structures/project_template/trained-models"
-    weights_dir = "/home/sebastian/university/algorithms_and_data_structures/project_template/model-weights"
     # save_model_for_training(trained_model, path.join(models_dir, "basic-model-1"))
 
-    loaded_model = load_model(path.join(models_dir, "basic-model-4"))
-    # loaded_model = retrain_model(loaded_model,
-    #                              data_set["training"][0],
-    #                              data_set["training"][1],
-    #                              num_output_layers,
-    #                              batch_size=32,
-    #                              epochs=10)
+    loaded_model = load_model(path.join(models_dir, "basic-model-7"))
+    loaded_model = retrain_model(loaded_model,
+                                 data_set["training"][0],
+                                 data_set["training"][1],
+                                 num_output_layers,
+                                 batch_size=32,
+                                 epochs=15)
 
-    # save_model_for_training(loaded_model, path.join(models_dir, "basic-model-5"))
+    save_model_for_training(loaded_model, path.join(models_dir, "basic-model-8"))
 
-    # evaluation = evaluate_model(loaded_model, data_set["test"][0], data_set["test"][1], 4)
+    evaluation = evaluate_model(loaded_model, data_set["test"][0], data_set["test"][1], batch_size=4)
 
-    # print(f"(loss, accuracy): {evaluation}")
+    print(f"(loss, accuracy): {evaluation}")
 
-    # predictions = classify_images(loaded_model, text_labels, data_set["test"][0])
+    predictions = classify_images(loaded_model, text_labels, data_set["test"][0])
 
-    # print(data_set["test"][1])
-    # print(text_labels)
-    # print(predictions)
-    # show_classified_images_5x5(data_set["test"][0][:25], predictions[:25])
-
+    print(data_set["test"][1])
+    print(text_labels)
+    print(predictions)
+    show_classified_images_5x5(data_set["test"][0][:25], predictions[:25])
 
     ####### Random internet images ########
+    # test_faces_dir = "/home/sebastian/university/algorithms_and_data_structures/test-faces"
 
-    test_faces_dir = "/home/sebastian/university/algorithms_and_data_structures/test-faces"
+    # test_image = preprocess_image(read_image(path.join(test_faces_dir, "emma1.png")), 300, 300)
 
-    test_image = preprocess_image(read_image(path.join(test_faces_dir, "emma1.png")), 300, 300)
-
-    prediction = classify_image(loaded_model, text_labels, test_image)
-    print(prediction)
+    # prediction = classify_image(loaded_model, text_labels, test_image)
+    # print(prediction)
 
 
 def rmdir_r(rootpath):

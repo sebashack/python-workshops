@@ -18,7 +18,9 @@ def remove_redundancy_from_samples(labeled_images, tolerance, limit):
 
 
 def generate_rois(images, w, h):
-    roiss = list(map(lambda img: detect_faces(img)[1], images))
+    images_ = list(filter(lambda img: img is not None, images))
+
+    roiss = list(map(lambda img: detect_faces(img)[1], images_))
     rois = [item for roi in roiss for item in roi]
 
     return list(map(lambda img: reduce_image_resolution(img, w, h), rois))
@@ -138,7 +140,7 @@ def base64_str_to_np_image(s):
 
 
 def np_image_to_base64(image):
-    retval, buff = cv2.imencode(".png", image)
+    retval, buff = cv2.imencode(".jpg", image)
     img_as_text = base64.b64encode(buff)
     return img_as_text.decode("utf-8")
 

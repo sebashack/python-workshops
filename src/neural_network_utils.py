@@ -201,7 +201,7 @@ def basic_cnn_model(shape, num_output_layers):
     # First layer
     model.add(
         layers.Conv2D(
-            20,
+            40,
             (5, 5),
             activation="relu",
             padding="same",
@@ -213,7 +213,7 @@ def basic_cnn_model(shape, num_output_layers):
     model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))
 
     # Third layer
-    model.add(layers.Conv2D(50, (5, 5), activation="relu", padding="same"))
+    model.add(layers.Conv2D(100, (5, 5), activation="relu", padding="same"))
 
     # Fourth layer
     model.add(layers.MaxPooling2D(pool_size=(2, 2), strides=(2, 2)))

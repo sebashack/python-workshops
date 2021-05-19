@@ -7,6 +7,8 @@ import numpy as np
 import math
 from random import randrange
 
+from face_utils import reduce_image_resolution, to_gray_image
+
 
 def show_images_5x5(images, text_labels, num_labels, n, offset):
     plt.figure(figsize=(10, 10))
@@ -89,6 +91,22 @@ def train_model(training_images, training_labels, num_output_layers, batch_size,
     return model
 
 
+def retrain_model(model, training_images, training_labels, num_output_layers, batch_size, epochs):
+    size = training_images.shape[0]
+    width = training_images.shape[1]
+    height = training_images.shape[2]
+
+    training_images_ = training_images.reshape(size, width, height, 1) / 255.0
+
+    gen = make_data_generator(training_images_, training_labels, batch_size)
+
+    model.fit_generator(gen['iterator'],
+                        steps_per_epoch=gen['steps_per_epoch'],
+                        epochs=epochs)
+
+    return model
+
+
 def partition_sample(training_images, training_labels, percentage):
     assert percentage >= 1 and percentage <= 100
     size = len(training_images)
@@ -114,12 +132,21 @@ def evaluate_model(model, example_images, example_labels, batch_size):
     return (loss, accuracy)
 
 
-def save_model(filepath, model):
-    model.save(filepath)
+def save_model_for_training(model, filepath):
+    model.save(filepath, save_format='tf')
+
+
+def save_model_weights(model, filepath):
+    model.save(filepath, save_format='h5')
 
 
 def load_model(filepath):
-    keras.models.load_model(filepath)
+    return keras.models.load_model(filepath)
+
+
+def preprocess_image(image, w, h):
+    gray_image = to_gray_image(image)
+    return reduce_image_resolution(gray_image, w, h)
 
 
 def classify_image(model, text_labels, image):
@@ -139,7 +166,6 @@ def classify_images(model, text_labels, images):
     input_ = np.array(images).reshape(size, width, height, 1)
 
     predictions = model.predict(input_)
-    print(f"Original preds: {predictions}")
 
     return list(map(lambda p: get_label(text_labels, p), predictions))
 

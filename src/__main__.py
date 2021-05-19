@@ -100,15 +100,15 @@ def main(argv):
 
     new_sample = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
 
-    print(len(new_sample['rihanna']))
+    print(len(new_sample['donald-trump']))
 
     accum_sample = read_sample_from_json("/home/sebastian/university/algorithms_and_data_structures/project_template/sample.json")
 
-    print(len(accum_sample['rihanna']))
+    print(len(accum_sample['donald-trump']))
 
     merged_sample = merge_samples(accum_sample, new_sample)
 
-    print(len(merged_sample['rihanna']))
+    print(len(merged_sample['donald-trump']))
 
     json_path = args.out_json
     write_sample_as_json(merged_sample, json_path)

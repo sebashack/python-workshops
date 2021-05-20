@@ -27,34 +27,83 @@ source .env/bin/activate
 deactivate
 ```
 
-## Run code
-
-First, make sure venv is active.
-
-The application's command line has the following structure:
+## Command line usage
 
 ```
-usage: src [-h] -i DIR -o DIR -j FILE -wt INT -ht INT
-args: the following arguments are required: -i/--input-dir, -o/--out-dir, -j/--out-json, -wt/--width, -ht/--height
+usage: src [-h] -m MODE [-i FILE] [-l DIR] [-e INT] [-d FILE]
+```
+
+### Train a model from scratch
+
+Invoke the main python script in `train` mode without a previously trained model:
+
+```
+python src -m train -d <path-to-data-file> -e=15
+```
+
+where
+
+```
+-d: Path to data-set file in json format.
+-e: Number of epochs to train the model.
+```
+
+### Train a model from a previously trained model
+
+Invoke the main python script in `train` mode with a previously trained model:
+
+```
+python src -m train -d <path-to-data-file> -l <path-to-trained-model-dir> -l -e=15
+```
+
+where
+
+```
+-l: Path to trained model directory.
+```
+
+### Evaluate efficacy of model
+
+Invoke the main python script in `evaluate` mode:
+
+```
+python src -m evaluate -d <path-to-data-file> -l <path-to-trained-model-dir>
+```
+
+### Prediction
+
+Invoke the main python script in `classify` mode:
+
+```
+python src -m classify -d <path-to-data-file> -l <path-to-trained-model-dir> -i <input-image-to-classify>
 
 ```
 
 where
 
-- `--input-dir`: Input directory with raw images which haven't been preprocessed.
-- `--out-dir`: Output directory where processed images are located for subsequent display in ImageViewer. Image
-               is transformed to gray-scale, and resolution is adjusted by `width x height` pixels.
-- `--out-json`: Output json file where images are stored after user has labeled them via ImageViewer. Images are
-                stored in base64.
-
-Here is an example. Run command line like this:
-
 ```
-python src -i ./face-examples -o ./unlabeled-images -j ./sample.json -wt 300 -ht 300
+-i: Path to input image file to be classified.
 ```
 
-This command will read images from dir `./face-examples` and write rois with `300 x 300` resolution into `./unlabeled-images`.
-Subsequently, ImageViewer will pop up and user will proceed to label each example. When labeling is finished, the dictionary of
-images is properly encoded and written into `./sample.json` file.
+## Notes on this repository
 
-In the root of this project there is a sample directory with raw images at `./face-examples`.
+
+- The CNN model trained for this project used the data-set `sample.json` in the root of this repository.
+- The set of labels used for this model is:
+
+```
+{
+    0: "barack-obama",      # Barack Obama
+    1: "rihanna",           # Rihanna
+    2: "donald-trump",      # Donald Trump
+    3: "emma-chamberlain",  # Emma Chamberlain
+    4: "justin",            # Justin Bieber
+    5: "jennifer",          # Jennifer Aniston
+}
+
+```
+
+Thus these are the only celebreties which are possible to identify with this model.
+
+- the directory `example-images` has some images that you can user to try out the command-line application
+  in `classify` mode.

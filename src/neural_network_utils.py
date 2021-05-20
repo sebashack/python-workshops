@@ -7,7 +7,8 @@ import numpy as np
 import math
 from random import randrange
 
-from face_utils import reduce_image_resolution, to_gray_image
+
+all_text_labels = {0: 'barack-obama', 1: 'rihanna', 2: 'donald-trump', 3: 'emma-chamberlain', 4: 'justin', 5: 'jennifer'}
 
 
 def show_images_5x5(images, text_labels, num_labels, n, offset):
@@ -44,6 +45,8 @@ def label_dict_to_matrix(data_set):
     num_labels = []
 
     i = 0
+    # since python 3.6+ dicts are insertion-ordered,
+    # thus order of labels should not be altered.
     for label, images in data_set.items():
         for image in images:
             mx.append(image)
@@ -67,7 +70,9 @@ def shuffle(mx, num_labels):
         num_labels[i], num_labels[j] = num_labels[j], num_labels[i]
 
 
-def train_model(training_images, training_labels, num_output_layers, batch_size, epochs):
+def train_model(
+    training_images, training_labels, num_output_layers, batch_size, epochs
+):
     size = training_images.shape[0]
     width = training_images.shape[1]
     height = training_images.shape[2]
@@ -84,14 +89,16 @@ def train_model(training_images, training_labels, num_output_layers, batch_size,
 
     gen = make_data_generator(training_images_, training_labels, batch_size)
 
-    model.fit_generator(gen['iterator'],
-                        steps_per_epoch=gen['steps_per_epoch'],
-                        epochs=epochs)
+    model.fit_generator(
+        gen["iterator"], steps_per_epoch=gen["steps_per_epoch"], epochs=epochs
+    )
 
     return model
 
 
-def retrain_model(model, training_images, training_labels, num_output_layers, batch_size, epochs):
+def retrain_model(
+    model, training_images, training_labels, num_output_layers, batch_size, epochs
+):
     size = training_images.shape[0]
     width = training_images.shape[1]
     height = training_images.shape[2]
@@ -100,9 +107,9 @@ def retrain_model(model, training_images, training_labels, num_output_layers, ba
 
     gen = make_data_generator(training_images_, training_labels, batch_size)
 
-    model.fit_generator(gen['iterator'],
-                        steps_per_epoch=gen['steps_per_epoch'],
-                        epochs=epochs)
+    model.fit_generator(
+        gen["iterator"], steps_per_epoch=gen["steps_per_epoch"], epochs=epochs
+    )
 
     return model
 
@@ -127,26 +134,21 @@ def evaluate_model(model, example_images, example_labels, batch_size):
     example_images_ = example_images.reshape(size, width, height, 1) / 255.0
     gen = make_data_generator(example_images_, example_labels, batch_size)
 
-    (loss, accuracy) = model.evaluate(gen['iterator'], verbose=2)
+    (loss, accuracy) = model.evaluate(gen["iterator"], verbose=2)
 
     return (loss, accuracy)
 
 
 def save_model_for_training(model, filepath):
-    model.save(filepath, save_format='tf')
+    model.save(filepath, save_format="tf")
 
 
 def save_model_weights(model, filepath):
-    model.save(filepath, save_format='h5')
+    model.save(filepath, save_format="h5")
 
 
 def load_model(filepath):
     return keras.models.load_model(filepath)
-
-
-def preprocess_image(image, w, h):
-    gray_image = to_gray_image(image)
-    return reduce_image_resolution(gray_image, w, h)
 
 
 def classify_image(model, text_labels, image):
@@ -160,10 +162,11 @@ def classify_image(model, text_labels, image):
 
 
 def classify_images(model, text_labels, images):
-    size = images.shape[0]
-    width = images.shape[1]
-    height = images.shape[2]
-    input_ = np.array(images).reshape(size, width, height, 1)
+    images_ = np.array(images)
+    size = images_.shape[0]
+    width = images_.shape[1]
+    height = images_.shape[2]
+    input_ = images_.reshape(size, width, height, 1)
 
     predictions = model.predict(input_)
 
@@ -185,14 +188,14 @@ def make_data_generator(data_set, labels, batch_size):
 
     data_set_ = data_set.reshape(size, width, height, 1)
 
-    datagen = ImageDataGenerator(horizontal_flip=True,
-                                 rotation_range=50,
-                                 brightness_range=[0.2, 1.0])
+    datagen = ImageDataGenerator(
+        horizontal_flip=True, rotation_range=50, brightness_range=[0.2, 1.0]
+    )
 
     it = datagen.flow(data_set_, labels, batch_size=batch_size)
     steps_per_epoch = math.ceil(len(data_set) / batch_size)
 
-    return {'iterator': it, 'steps_per_epoch': steps_per_epoch}
+    return {"iterator": it, "steps_per_epoch": steps_per_epoch}
 
 
 def basic_cnn_model(shape, num_output_layers):
@@ -230,12 +233,12 @@ def basic_cnn_model(shape, num_output_layers):
 
 def resnet50_cnn_model(shape, num_output_layers):
     model = tf.keras.applications.ResNet50(
-            include_top=True,
-            weights=None,
-            input_tensor=None,
-            input_shape=shape,
-            pooling=None,
-            classes=num_output_layers
+        include_top=True,
+        weights=None,
+        input_tensor=None,
+        input_shape=shape,
+        pooling=None,
+        classes=num_output_layers,
     )
 
     return model

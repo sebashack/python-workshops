@@ -1,9 +1,15 @@
-from os import walk, path, mkdir, rmdir, remove
+from os import walk, path, mkdir, rmdir, remove, getcwd, environ
+
+environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
+
 from pathlib import Path
 import argparse
 import sys
+from datetime import datetime
+
 
 from face_utils import (
+    show_images,
     generate_rois,
     merge_samples,
     read_images,
@@ -28,151 +34,154 @@ from neural_network_utils import (
     save_model_for_training,
     save_model_weights,
     load_model,
-    preprocess_image,
+    all_text_labels,
 )
 
 
 def main(argv):
-    parser = argparse.ArgumentParser(description="Face trainer")
+    parser = argparse.ArgumentParser(description="Celebrity face classifier")
+    parser.add_argument(
+        "-m",
+        "--mode",
+        required=True,
+        metavar="MODE",
+        choices=["train", "classify", "evaluate"],
+        type=str,
+        help="program mode",
+    )
+
     parser.add_argument(
         "-i",
-        "--input-dir",
-        required=True,
-        metavar="DIR",
-        type=Path,
-        help="raw images input dir",
-    )
-    parser.add_argument(
-        "-o",
-        "--out-dir",
-        required=True,
-        metavar="DIR",
-        type=Path,
-        help="processed rois output dir",
-    )
-    parser.add_argument(
-        "-j",
-        "--out-json",
-        required=True,
+        "--input-image",
+        required=False,
         metavar="FILE",
         type=Path,
-        help="json file output",
+        help="input image to be classified",
     )
+
     parser.add_argument(
-        "-wt",
-        "--width",
-        required=True,
-        metavar="INT",
-        type=int,
-        help="proccessed image width",
+        "-l",
+        "--model",
+        required=False,
+        metavar="DIR",
+        type=Path,
+        help="path to pretrained model",
     )
+
     parser.add_argument(
-        "-ht",
-        "--height",
-        required=True,
+        "-e",
+        "--epochs",
+        required=False,
         metavar="INT",
+        default=10,
         type=int,
-        help="proccessed image height",
+        help="number of epochs to train model",
     )
+
+    parser.add_argument(
+        "-d",
+        "--data-set",
+        required=False,
+        metavar="FILE",
+        type=Path,
+        help="path to json file with data-set",
+    )
+
     args = parser.parse_args()
 
-    raw_dirpath = args.input_dir
+    if args.mode == "classify" and args.input_image is None:
+        print("'classify' mode requires '--input-image'", file=sys.stderr)
+        exit(1)
 
-    if not path.isdir(raw_dirpath):
-        print(f"non-existent raw input dir: {raw_dirpath}", file=sys.stderr)
-        raise Exception("non-existent directory")
+    if args.mode == "train" and args.data_set is None:
+        print("'train' mode requires '--data-set'", file=sys.stderr)
+        exit(1)
 
-    images = read_images(raw_dirpath)
-    width = args.width
-    height = args.height
-    # rois = generate_rois(images, width, height)
+    if args.mode == "evaluate" and (args.data_set is None or args.model is None):
+        print("'evaluate' mode requires '--model' and '--data-set'", file=sys.stderr)
+        exit(1)
 
-    unlabeled_dirpath = args.out_dir
+    if args.mode == "classify":
+        image = read_image(str(args.input_image))
+        width = 300
+        height = 300
 
-    try:
-        rmdir_r(unlabeled_dirpath)
-        mkdir(unlabeled_dirpath)
-    except OSError:
-        print(f"creating processed rois output dir at: {unlabeled_dirpath}")
-        mkdir(unlabeled_dirpath)
+        rois = generate_rois([image], width, height)
 
-    # write_images(rois, unlabeled_dirpath)
+        if len(rois) > 0:
+            loaded_model = load_model(args.model)
+            predictions = classify_images(loaded_model, all_text_labels, rois)
 
-    all_text_labels = ["donald-trump",
-                       "rihanna",
-                       "emma-chamberlain",
-                       "barack-obama",
-                       "jennifer",
-                       "justin"
-                       ]
+            show_classified_images_5x5(rois[:25], predictions[:25])
+        else:
+            print("no rois detected")
 
-    # new_sample = launch_viewer(unlabeled_dirpath, args.width, args.height, all_text_labels)
+        exit(0)
 
-    # print(len(new_sample['barack-obama']))
+    if args.mode == "evaluate":
+        print("evaluating model ...")
+        sample_path = args.data_set
+        sample = read_sample_from_json(sample_path)
+        (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(sample)
+        data_set = partition_sample(sample_imgs, numeric_labels, percentage=10)
+        trained_model = load_model(args.model)
 
-    # accum_sample = read_sample_from_json("/home/sebastian/university/algorithms_and_data_structures/project_template/sample.json")
+        evaluation = evaluate_model(
+            trained_model, data_set["test"][0], data_set["test"][1], batch_size=4
+        )
 
-    # print(len(accum_sample['barack-obama']))
+        print(f"loss: {evaluation[0]}, accuracy: {evaluation[1]}")
+        exit(0)
 
-    # merged_sample = merge_samples(accum_sample, new_sample)
+    if args.mode == "train":
+        sample_path = args.data_set
+        sample = read_sample_from_json(sample_path)
+        (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(sample)
+        data_set = partition_sample(sample_imgs, numeric_labels, percentage=10)
 
-    # print(len(merged_sample['barack-obama']))
+        models_dir = path.join(getcwd(), "trained-models")
 
-    json_path = args.out_json
-    # write_sample_as_json(merged_sample, json_path)
+        try:
+            mkdir(models_dir)
+        except OSError:
+            print("'trained-models' DIR already exists")
 
-    read_sample = read_sample_from_json(json_path)
+        num_output_layers = len(text_labels)
+        timestamp = datetime.now()
+        timestamp = timestamp.strftime("%Y-%m-%d-%H:%M:%S")
+        model_name = str(timestamp) + "--model"
+        epochs = args.epochs
+        trained_model = None
 
-    # show_images_dict(read_sample, 500)
+        if args.model is None:
+            print(f"trainining model from scratch for {epochs} epoch(s)...")
+            trained_model = train_model(
+                data_set["training"][0],
+                data_set["training"][1],
+                num_output_layers,
+                batch_size=32,
+                epochs=epochs,
+            )
+        else:
+            print(f"trainining model from previous one for {epochs} epoch(s)...")
+            trained_model = load_model(args.model)
+            trained_model = retrain_model(
+                trained_model,
+                data_set["training"][0],
+                data_set["training"][1],
+                num_output_layers,
+                batch_size=32,
+                epochs=epochs,
+            )
 
-    (sample_imgs, numeric_labels, text_labels) = label_dict_to_matrix(read_sample)
+        save_model_for_training(trained_model, path.join(models_dir, model_name))
 
-    num_output_layers = len(text_labels)
-    print(f"num output layers: {num_output_layers}")
+        evaluation = evaluate_model(
+            trained_model, data_set["test"][0], data_set["test"][1], batch_size=4
+        )
 
-    data_set = partition_sample(sample_imgs, numeric_labels, percentage=10)
-
-    print(f"len total: {(len(sample_imgs), len(numeric_labels))}")
-    print(
-        f"len training: {(len(data_set['training'][0]), len(data_set['training'][1]))}"
-    )
-    print(f"len test: {(len(data_set['test'][0]), len(data_set['test'][1]))}")
-
-    # trained_model = train_model(
-    #     data_set["training"][0], data_set["training"][1], num_output_layers, batch_size=32, epochs=30
-    # )
-
-    models_dir = "/home/sebastian/university/algorithms_and_data_structures/project_template/trained-models"
-    # save_model_for_training(trained_model, path.join(models_dir, "basic-model-1"))
-
-    loaded_model = load_model(path.join(models_dir, "basic-model-7"))
-    loaded_model = retrain_model(loaded_model,
-                                 data_set["training"][0],
-                                 data_set["training"][1],
-                                 num_output_layers,
-                                 batch_size=32,
-                                 epochs=15)
-
-    save_model_for_training(loaded_model, path.join(models_dir, "basic-model-8"))
-
-    evaluation = evaluate_model(loaded_model, data_set["test"][0], data_set["test"][1], batch_size=4)
-
-    print(f"(loss, accuracy): {evaluation}")
-
-    predictions = classify_images(loaded_model, text_labels, data_set["test"][0])
-
-    print(data_set["test"][1])
-    print(text_labels)
-    print(predictions)
-    show_classified_images_5x5(data_set["test"][0][:25], predictions[:25])
-
-    ####### Random internet images ########
-    # test_faces_dir = "/home/sebastian/university/algorithms_and_data_structures/test-faces"
-
-    # test_image = preprocess_image(read_image(path.join(test_faces_dir, "emma1.png")), 300, 300)
-
-    # prediction = classify_image(loaded_model, text_labels, test_image)
-    # print(prediction)
+        print(f"loss: {evaluation[0]}, accuracy: {evaluation[1]}")
+        exit(0)
 
 
 def rmdir_r(rootpath):

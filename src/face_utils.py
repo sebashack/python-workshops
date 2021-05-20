@@ -120,6 +120,7 @@ def read_sample_from_json(filepath):
     return labeled_images
 
 
+# Given a loaded data-set merge new data into it.
 def merge_samples(labeled_images1, labeled_images2):
     merged_images = labeled_images1
 

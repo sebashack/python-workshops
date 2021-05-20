@@ -1,40 +1,29 @@
-from os import walk, path, mkdir, rmdir, remove, getcwd, environ
+from os import path, mkdir, getcwd, environ
 
 environ["TF_CPP_MIN_LOG_LEVEL"] = "3"
 
+from datetime import datetime
 from pathlib import Path
 import argparse
 import sys
-from datetime import datetime
-
 
 from face_utils import (
-    show_images,
     generate_rois,
-    merge_samples,
-    read_images,
     read_image,
     read_sample_from_json,
-    remove_redundancy_from_samples,
-    show_images_dict,
-    write_images,
-    write_sample_as_json,
 )
-from image_viewer import launch_viewer
 from neural_network_utils import (
+    all_text_labels,
     classify_image,
     classify_images,
     evaluate_model,
     label_dict_to_matrix,
+    load_model,
     partition_sample,
-    show_classified_images_5x5,
-    show_images_5x5,
-    train_model,
     retrain_model,
     save_model_for_training,
-    save_model_weights,
-    load_model,
-    all_text_labels,
+    show_classified_images_5x5,
+    train_model,
 )
 
 
@@ -182,17 +171,6 @@ def main(argv):
 
         print(f"loss: {evaluation[0]}, accuracy: {evaluation[1]}")
         exit(0)
-
-
-def rmdir_r(rootpath):
-    for (parent, subdirs, filenames) in walk(rootpath):
-        for fname in filenames:
-            remove(path.join(parent, fname))
-        for dirpath in subdirs:
-            rmdir(path.join(parent, dirpath))
-        rmdir(parent)
-
-    rmdir(rootpath)
 
 
 if __name__ == "__main__":

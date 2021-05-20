@@ -1,14 +1,22 @@
-import tensorflow as tf
+from random import randrange
 from tensorflow import keras
-from tensorflow.keras.preprocessing.image import ImageDataGenerator
 from tensorflow.keras import layers, models
+from tensorflow.keras.preprocessing.image import ImageDataGenerator
+import math
 import matplotlib.pyplot as plt
 import numpy as np
-import math
-from random import randrange
+import tensorflow as tf
 
 
-all_text_labels = {0: 'barack-obama', 1: 'rihanna', 2: 'donald-trump', 3: 'emma-chamberlain', 4: 'justin', 5: 'jennifer'}
+# All labels considered for this project.
+all_text_labels = {
+    0: "barack-obama",
+    1: "rihanna",
+    2: "donald-trump",
+    3: "emma-chamberlain",
+    4: "justin",
+    5: "jennifer",
+}
 
 
 def show_images_5x5(images, text_labels, num_labels, n, offset):
@@ -39,6 +47,9 @@ def show_classified_images_5x5(images, labels_and_pobs):
     plt.show()
 
 
+# This helper was used to transform the dictionary data
+# structure into another data structure that is suitable for
+# training with Keras.
 def label_dict_to_matrix(data_set):
     mx = []
     labels = {}
@@ -59,6 +70,7 @@ def label_dict_to_matrix(data_set):
     return (np.array(mx), np.array(num_labels), labels)
 
 
+# Shuffle data set.
 def shuffle(mx, num_labels):
     size = len(mx)
 
@@ -70,6 +82,7 @@ def shuffle(mx, num_labels):
         num_labels[i], num_labels[j] = num_labels[j], num_labels[i]
 
 
+# Train model from scratch.
 def train_model(
     training_images, training_labels, num_output_layers, batch_size, epochs
 ):
@@ -96,6 +109,7 @@ def train_model(
     return model
 
 
+# Train a previously trained model, that is, one that has been loaded.
 def retrain_model(
     model, training_images, training_labels, num_output_layers, batch_size, epochs
 ):
@@ -114,6 +128,8 @@ def retrain_model(
     return model
 
 
+# Partition data-set into training and test data. `percentage` is
+# the proportion of test samples.
 def partition_sample(training_images, training_labels, percentage):
     assert percentage >= 1 and percentage <= 100
     size = len(training_images)
@@ -126,6 +142,7 @@ def partition_sample(training_images, training_labels, percentage):
     return {"training": training_set, "test": test_set}
 
 
+# Evaluate model's efficacy.
 def evaluate_model(model, example_images, example_labels, batch_size):
     size = example_images.shape[0]
     width = example_images.shape[1]
@@ -181,6 +198,7 @@ def get_label(text_labels, prediction):
     return (predicted_label, probability)
 
 
+# Create data generator for data augmentation.
 def make_data_generator(data_set, labels, batch_size):
     size = data_set.shape[0]
     width = data_set.shape[1]
@@ -227,18 +245,5 @@ def basic_cnn_model(shape, num_output_layers):
 
     # Output layer
     model.add(layers.Dense(num_output_layers, activation="softmax"))
-
-    return model
-
-
-def resnet50_cnn_model(shape, num_output_layers):
-    model = tf.keras.applications.ResNet50(
-        include_top=True,
-        weights=None,
-        input_tensor=None,
-        input_shape=shape,
-        pooling=None,
-        classes=num_output_layers,
-    )
 
     return model

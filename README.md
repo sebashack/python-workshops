@@ -107,3 +107,10 @@ Thus these are the only celebreties which are possible to identify with this mod
 
 - the directory `example-images` has some images that you can user to try out the command-line application
   in `classify` mode.
+
+## Trained models
+
+The trained model to try out the command line can be found downloaded from either of the following links:
+
+- Google Drive: https://drive.google.com/file/d/1Hn9U_HNzZzO8FDXLZCaOjRtH2SfQT16f/view?usp=sharing
+- One Drive: https://eafit-my.sharepoint.com/:u:/g/personal/spulido1_eafit_edu_co/ET5Q8i0iRPRAlP_-8HtqMb0BEscUcAB3ygcUs8BD7P8Tzg?e=4Jsw2t
